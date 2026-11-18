@@ -6,12 +6,13 @@
 
 ## Your actual GitHub Constellation
 
-**Verified source:** GitHub GraphQL contribution calendar for [@AdityaSreevatsaK](https://github.com/AdityaSreevatsaK), dated **18 November 2026**. The verified API response covers the complete displayed 53-week calendar through that date; counts may exclude private activity that the workflow token cannot see.
+**Verified source:** GitHub GraphQL contribution calendar for [@AdityaSreevatsaK](https://github.com/AdityaSreevatsaK). The complete 53-week display is refreshed automatically; private contribution visibility depends on GitHub settings and API-token scope.
 
-- **1,803 API-visible GitHub contributions**
-- **99 active dates**
-- **16 consecutive active-day runs**
-- **Three original animations, both themes**, with motionless SVG alternatives
+<!-- CONSTELLATION_SUMMARY_START -->
+**Snapshot:** 18 November 2026 (UTC). **1,828 API-visible GitHub contributions** across **99 active dates** and **16 consecutive active-day runs**.
+<!-- CONSTELLATION_SUMMARY_END -->
+
+**Three original animations, both themes**, with motionless SVG alternatives.
 
 ### Real Comet Streaks
 

@@ -11,6 +11,7 @@ on:
       - 'engine.mjs'
       - 'export.mjs'
       - 'export_gif.py'
+      - 'update_readme_stats.mjs'
       - '.github/workflows/owner-calendar.yml'
   workflow_dispatch:
   schedule:
@@ -95,12 +96,15 @@ jobs:
           print('Verified 12 official SVGs and six 16-second GIFs')
           PY
 
+      - name: Refresh README's source-verified contribution totals
+        run: node update_readme_stats.mjs --input local-output/owner-calendar.json --readme README.md
+
       - name: Commit only refreshed public-facing image assets to this repository
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- assets/real/AdityaSreevatsaK/
+          git add -- assets/real/AdityaSreevatsaK/ README.md
           if git diff --cached --quiet; then
             echo "Official calendar images already current"
           else

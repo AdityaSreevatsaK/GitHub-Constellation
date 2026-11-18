@@ -82,3 +82,7 @@ Each AI agent must actually implement approved work, run relevant tests, export 
 ## Verified work merged into master
 
 Authenticated GraphQL collection and rendering succeeded on 18 November 2026 for AdityaSreevatsaK: 1,803 API-visible contributions, 99 active dates and 16 consecutive-day runs. Both themes across all three designs are committed as 12 SVGs and six native GIFs. The composite Action was exercised with real API input. See CI run 44317579330 for 39 Node tests, five Python GIF tests, browser checks and SVG validation; see owner preview run 44316951258 for authenticated collection and GIFs. Master includes the approved implementation. The live GitHub profile repository remains unchanged.
+
+## Latest refresh improvement
+
+The owner workflow now writes verified contribution totals and collection timestamps into the README between clearly delimited markers, alongside its six generated GIFs and twelve SVGs. It commits only the README summary and published image assets. The summary is derived from the same validated official response as the SVGs, so daily updates cannot leave a static count misleading readers. The source snapshot and token remain uncommitted.
