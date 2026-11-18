@@ -1,0 +1,93 @@
+name: Render owner's official GitHub Constellation
+
+# Development push generates a real-account preview on the feature branch.
+# After owner-approved merge, schedule and manual run update this repo only.
+on:
+  push:
+    branches: [feature/official-calendar-and-automation]
+    paths:
+      - 'official_calendar.mjs'
+      - 'collect-contributions.mjs'
+      - 'engine.mjs'
+      - 'export.mjs'
+      - 'export_gif.py'
+      - '.github/workflows/owner-calendar.yml'
+  workflow_dispatch:
+  schedule:
+    - cron: '23 2 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: github-constellation-owner-calendar
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.repository == 'AdityaSreevatsaK/GitHub-Constellation' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Collect verified official contribution days for owner
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node collect-contributions.mjs --username AdityaSreevatsaK --out local-output/owner-calendar.json
+
+      - name: Render six official night/paper SVGs
+        run: |
+          node export.mjs --input local-output/owner-calendar.json --out assets/real/AdityaSreevatsaK --design all --theme both
+
+      - name: Install browser GIF renderer
+        run: |
+          python -m pip install --disable-pip-version-check "pillow>=10,<13" "playwright>=1.48,<2"
+          python -m playwright install --with-deps chromium
+
+      - name: Render six official native GIFs
+        run: python export_gif.py --source assets/real/AdityaSreevatsaK --out assets/real/AdityaSreevatsaK
+
+      - name: Verify all exported assets and encoded GIF durations
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          import xml.etree.ElementTree as ET
+          root=Path('assets/real/AdityaSreevatsaK')
+          svgs=list(root.glob('*.svg'))
+          gifs=list(root.glob('*.gif'))
+          assert len(svgs)==12, f'expected 12 SVGs, got {len(svgs)}'
+          assert len(gifs)==6, f'expected six GIFs, got {len(gifs)}'
+          for svg in svgs:
+              xml=ET.parse(svg).getroot()
+              assert xml.attrib.get('data-source')=='github_contribution_calendar',svg
+          for path in gifs:
+              with Image.open(path) as gif:
+                  assert gif.size==(720,234),path
+                  assert gif.n_frames>=8,path
+                  duration=sum((gif.seek(i) or gif.info['duration']) for i in range(gif.n_frames))
+                  assert duration==16000,(path,duration)
+          print('Verified 12 official SVGs and six 16-second GIFs')
+          PY
+
+      - name: Commit only refreshed public-facing image assets to this repository
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- assets/real/AdityaSreevatsaK/
+          if git diff --cached --quiet; then
+            echo "Official calendar images already current"
+          else
+            git commit -m "chore(calendar): refresh API-visible owner constellation imagery"
+            git push origin HEAD:"${{ github.ref_name }}"
+          fi
