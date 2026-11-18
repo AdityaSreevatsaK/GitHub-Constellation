@@ -37,11 +37,17 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import xml.etree.ElementTree as ET
-          files = sorted(Path('assets').rglob('*.svg'))
+          files = sorted(Path('assets').glob('*.svg')) + sorted(Path('assets/stress').glob('*.svg'))
           assert len(files) == 24, f"expected 24 modern SVGs, found {len(files)}"
           for file in files:
               assert ET.parse(file).getroot().tag.endswith('svg'), file
-          print("Validated", len(files), "SVG assets")
+          print("Validated", len(files), "synthetic SVG assets")
+          real = sorted(Path("assets/real/AdityaSreevatsaK").glob("*.svg"))
+          if real:
+              assert len(real) == 12, f"expected twelve real SVGs, got {len(real)}"
+              for file in real:
+                  assert ET.parse(file).getroot().attrib["data-source"] == "github_contribution_calendar"
+              print("Validated", len(real), "real-account SVG assets")
           PY
           node export.mjs
           node export.mjs --input fixtures/streak-demo.json --out assets/stress --label "SYNTHETIC STREAK STRESS TEST"
