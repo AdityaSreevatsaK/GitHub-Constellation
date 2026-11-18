@@ -1,6 +1,6 @@
 # Profile installation and automated updates
 
-**Development status:** available on the feature branch pending owner review. The owner's live profile has not been modified.
+**Status:** the official contribution collector and reusable Action are available on master following approval of PR #1. The owner's live profile has not been modified.
 
 ## Consumer workflow
 
@@ -56,7 +56,7 @@ In your profile README use:
 
 For reduced motion use assets/constellation/comet-night-still.svg.
 
-**The @master reference is valid after the approved feature PR is merged.** Until then, test against a reviewed commit SHA from the feature branch. Generated output is not published automatically by the composite Action. The consumer explicitly authorises committing in their own workflow.
+**The @master reference is now valid.** For reproducibility in third-party workflows, pin to a reviewed commit SHA or a future versioned release. Generated output is not published automatically by the composite Action. The consumer explicitly authorises committing in their own workflow.
 
 ## Action inputs
 

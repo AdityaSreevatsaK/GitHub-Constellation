@@ -5,9 +5,9 @@
 ## Current development progress (18 November 2026)
 
 - **P1 implemented and exercised:** official GraphQL collector (two date-scoped requests) validates every visible day, user identity and per-day counts/intensity without creating fake events.
-- **Real owner preview succeeded:** first real API-visible image run confirmed 1,803 contributions across 99 active dates and 16 consecutive-day runs as at 18 November 2026. Six animated GIFs and twelve SVGs committed only to the feature branch. Live image-proxy playback still awaits human inspection.
-- **P2 code implemented, not merged:** reusable composite Action, strict output-path handling and owner preview workflow. A separate real-account smoke step successfully invoked the composite Action with GIF rendering disabled. Scheduling activates only after the workflow is merged to master; the owner's actual profile remains untouched.
-- **Review boundary:** development is isolated on feature/official-calendar-and-automation and draft PR #1, with no profile installation, release or licence change.
+- **Real owner preview succeeded:** first real API-visible image run confirmed 1,803 contributions across 99 active dates and 16 consecutive-day runs as at 18 November 2026. Six animated GIFs and twelve SVGs committed to master after approved PR #1. Live image-proxy playback still awaits human inspection.
+- **P2 merged to master:** reusable composite Action, strict output-path handling and owner preview workflow. A separate real-account smoke step successfully invoked the composite Action with GIF rendering disabled. Daily scheduled refresh is enabled in master; the owner's actual profile remains untouched.
+- **Review boundary:** PR #1 was approved and squash-merged into master at 1d87603fac77371c25d6b982eef1ad3beb2945fb, with no profile installation, release or licence change.
 
 
 ## P0. Establish independent repository and migration parity
@@ -28,7 +28,7 @@ Deliverables:
 
 ## P1. Official GitHub contribution-calendar collector, starting with AdityaSreevatsaK
 
-**Implementation and real-account collection verified on feature branch. Keep the next tests, provenance and consumer integration honest.**
+**Implementation and real-account collection verified on master. Keep the next tests, provenance and consumer integration honest.**
 
 Implementation plan:
 1. Verify the live GitHub GraphQL schema and API limits for user(login) and contributionsCollection.contributionCalendar, date-window options, permissions, hidden/private contribution semantics and calendar boundaries.
@@ -79,6 +79,6 @@ Requirements:
 
 Each AI agent must actually implement approved work, run relevant tests, export fixtures, commit code and update this roadmap. Prefer focused draft PRs, and do not merge or change master after the initial migration without authorisation. Never assume another session has completed a milestone without verifying current repository state.
 
-## Verified work on the current feature branch
+## Verified work merged into master
 
-Authenticated GraphQL collection and rendering succeeded on 18 November 2026 for AdityaSreevatsaK: 1,803 API-visible contributions, 99 active dates and 16 consecutive-day runs. Both themes across all three designs are committed as 12 SVGs and six native GIFs. The composite Action was exercised with real API input. See CI run 44317579330 for 39 Node tests, five Python GIF tests, browser checks and SVG validation; see owner preview run 44316951258 for authenticated collection and GIFs. Master and the live GitHub profile remain unchanged until approved.
+Authenticated GraphQL collection and rendering succeeded on 18 November 2026 for AdityaSreevatsaK: 1,803 API-visible contributions, 99 active dates and 16 consecutive-day runs. Both themes across all three designs are committed as 12 SVGs and six native GIFs. The composite Action was exercised with real API input. See CI run 44317579330 for 39 Node tests, five Python GIF tests, browser checks and SVG validation; see owner preview run 44316951258 for authenticated collection and GIFs. Master includes the approved implementation. The live GitHub profile repository remains unchanged.

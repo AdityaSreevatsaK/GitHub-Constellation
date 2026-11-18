@@ -2,7 +2,7 @@
 
 **A year of coding activity, written in stars.** Three distinct animated reinterpretations of the familiar GitHub contribution calendar, with a 53-week by seven-day lattice and source-backed star positions.
 
-**Status:** Working animation engine and visual prototypes migrated from [GitHub-Activity-Studio](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/pull/1) at source commit [be7f524](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/commit/be7f524597285c2078565068ab23a683316404a2). **The feature branch now includes real GitHub API-visible contribution-calendar previews for @AdityaSreevatsaK**, collected on 18 November 2026. The original synthetic demonstrations are kept clearly separate. Reusable Action and daily automation are implemented on this draft branch; live profile installation remains optional and has not been performed.
+**Status:** Working animation engine and visual prototypes migrated from [GitHub-Activity-Studio](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/pull/1) at source commit [be7f524](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/commit/be7f524597285c2078565068ab23a683316404a2). **The master branch now includes real GitHub API-visible contribution-calendar previews for @AdityaSreevatsaK**, collected on 18 November 2026. The original synthetic demonstrations are kept clearly separate. The reusable Action and owner-only daily preview refresh are available on master. Live profile installation remains optional and has not been performed.
 
 ## Your actual GitHub Constellation
 
@@ -121,9 +121,9 @@ Start with [AGENTS.md](AGENTS.md) when using AI coding agents, then [architectur
 
 ## Important limitations and public-release plan
 
-**Profile Action implemented in the feature branch, not installed into anyone's profile.** The read-only official GraphQL collector is separate from the older synthetic event contract. The [reusable Action](action.yml), [profile installation instructions](docs/PROFILE_INSTALLATION.md) and [owner-only automated refresh](.github/workflows/owner-calendar.yml) are available for review. Daily schedules become active on this repository's default branch only after an approved merge. No other repository or live profile is modified.
+**Reusable profile Action available on master, not installed into anyone's profile.** The read-only official GraphQL collector is separate from the older synthetic event contract. The [reusable Action](action.yml), [profile installation instructions](docs/PROFILE_INSTALLATION.md) and [owner-only automated refresh](.github/workflows/owner-calendar.yml) are included in master. Daily owner-preview refresh is enabled on this repository's default branch. No other repository or live profile is modified.
 
-Next milestones: merge approval, GitHub-hosted animation playback review, wider consumer acceptance tests, customisation and public release documentation. See [ROADMAP](docs/ROADMAP.md).
+Next milestones: GitHub-hosted animation playback review, wider consumer acceptance tests, customisation and public release documentation. See [ROADMAP](docs/ROADMAP.md).
 
 The migration excludes unrelated Studio concepts and obsolete radial/clustered/calendar prototype art. The original [draft PR #1](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/pull/1) is retained as migration provenance.
 

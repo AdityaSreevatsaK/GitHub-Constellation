@@ -2,7 +2,7 @@
 
 ## Purpose
 
-GitHub Constellation is a GitHub-profile-ready renderer for real calendar-shaped activity, with Comet Streaks, Celestial Cartographer and Starforge animation modes. It is currently **a truthful event-sample prototype**, not yet a production GitHub profile action. All three modes share one date model; only presentation differs.
+GitHub Constellation is a GitHub-profile-ready renderer for real calendar-shaped activity, with Comet Streaks, Celestial Cartographer and Starforge animation modes. It is a verified official GitHub calendar renderer and reusable composite Action, with separate synthetic event-sample demonstrations. Consumer profile installation is opt-in. All three modes share one date model; only presentation differs.
 
 ## Source layout
 
@@ -92,7 +92,7 @@ The calendar rendering interface can be shared while provenance and metrics rema
 1. GitHub image proxy may suppress embedded SVG animations; native GIFs are intended for README motion and static SVGs are fallbacks.
 2. GitHub's official calendar semantics may differ from event-derived UTC dates: do not assume equivalence without testing.
 3. Privacy and access scope differ when querying another user or authenticated private contributions.
-4. Current action-free renderer has no live GitHub data collector, scheduler or profile installation.
+4. Live official data collection and scheduled project-local updates are implemented. The public consumer Action has been smoke-tested in this repository but is not installed in the owner's profile.
 5. The original Studio's draft PR, commits and legacy experiments remain historical provenance, not the active repository.
 
 See DATA_SOURCES.md for strict collection requirements and ROADMAP.md for the implementation sequence.
@@ -101,4 +101,4 @@ See DATA_SOURCES.md for strict collection requirements and ROADMAP.md for the im
 
 The official GitHub contribution-calendar source is separate from the event-sample contract. official_calendar.mjs collects and validates complete dated contributions from two GraphQL windows, rejecting missing days, altered identity, incorrect weekdays, negative counts, unexpected levels and API failures. collect-contributions.mjs accepts a token through an environment variable and writes a validated 2-official-calendar snapshot to an ignored local path. engine.mjs reads this typed data directly, retaining the 371-cell geometry while using actual contribution counts and API-defined intensity tiers, with source-specific tooltips and legends.
 
-exporters produce source-faithful SVGs and verified 16-second GIFs. action.yml provides an installable composite GitHub Action with validated username, design, theme and safe output path. The owner-calendar workflow operates only on this repository; its daily schedule is not active until merged to the default branch. The owner workflow successfully collected and rendered actual GitHub contributions for AdityaSreevatsaK on 18 November 2026, and also exercised the composite Action itself.
+exporters produce source-faithful SVGs and verified 16-second GIFs. action.yml provides an installable composite GitHub Action with validated username, design, theme and safe output path. The owner-calendar workflow operates only on this repository; its daily schedule is enabled on the default branch. The owner workflow successfully collected and rendered actual GitHub contributions for AdityaSreevatsaK on 18 November 2026, and also exercised the composite Action itself.

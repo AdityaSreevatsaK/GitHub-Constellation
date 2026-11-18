@@ -15,7 +15,7 @@ Both checked-in fixtures are synthetic and incomplete event observations.
 
 Never use fake events to fill gaps in real personalised imagery. Do not rename a synthetic file to imply it came from the user.
 
-## B. Official GitHub contribution calendar: implemented on feature branch
+## B. Official GitHub contribution calendar: implemented on master
 
 Use GitHub GraphQL and query the intended GitHub user:
 

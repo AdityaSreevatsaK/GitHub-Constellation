@@ -1,10 +1,10 @@
 name: Render owner's official GitHub Constellation
 
-# Development push generates a real-account preview on the feature branch.
-# After owner-approved merge, schedule and manual run update this repo only.
+# The owner-only preview refresh runs on mainline changes and the daily schedule.
+# This workflow never publishes or edits the owner's separate GitHub profile.
 on:
   push:
-    branches: [feature/official-calendar-and-automation]
+    branches: [master]
     paths:
       - 'official_calendar.mjs'
       - 'collect-contributions.mjs'
