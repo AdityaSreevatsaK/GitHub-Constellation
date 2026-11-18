@@ -27,8 +27,18 @@ jobs:
         run: node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs tests/test_readme.mjs
       - name: Run GIF encoder regression tests
         run: python -m unittest tests/test_gif.py -v
-      - name: Install headless Chromium
-        run: python -m playwright install --with-deps chromium
+      - name: Select installed Chrome or provision Chromium
+        shell: bash
+        run: |
+          if command -v google-chrome >/dev/null 2>&1; then
+            echo "CONSTELLATION_CHROMIUM=$(command -v google-chrome)" >> "$GITHUB_ENV"
+            echo "Using runner Chrome binary for offline browser checks"
+          elif command -v google-chrome-stable >/dev/null 2>&1; then
+            echo "CONSTELLATION_CHROMIUM=$(command -v google-chrome-stable)" >> "$GITHUB_ENV"
+            echo "Using runner stable Chrome binary"
+          else
+            python -m playwright install --with-deps chromium
+          fi
       - name: Browser smoke, desktop and mobile
         run: python tests/browser_smoke.py
       - name: Validate SVG archive and reproducibility
