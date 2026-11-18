@@ -1,0 +1,39 @@
+# Secrets and environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Python / virtual environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+.envrc
+
+# Node and local tools
+node_modules/
+.npm/
+.playwright/
+playwright-report/
+test-results/
+coverage/
+
+# Local browser/render experiments
+*.log
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Generated personal data
+private-data/
+local-output/

@@ -1,0 +1,600 @@
+{
+  "schema_version": "1",
+  "source": "demo",
+  "generated_at": "2026-11-16T00:00:00Z",
+  "user": {
+    "login": "synthetic-streak-lab",
+    "url": "https://github.com/example"
+  },
+  "repositories": [
+    {
+      "full_name": "sample-dev/aurora",
+      "name": "aurora",
+      "url": "https://github.com/example",
+      "language": "Python",
+      "stars": 12
+    },
+    {
+      "full_name": "sample-dev/atlas",
+      "name": "atlas",
+      "url": "https://github.com/example",
+      "language": "TypeScript",
+      "stars": 4
+    },
+    {
+      "full_name": "sample-dev/ember",
+      "name": "ember",
+      "url": "https://github.com/example",
+      "language": "Rust",
+      "stars": 2
+    },
+    {
+      "full_name": "sample-dev/orbit",
+      "name": "orbit",
+      "url": "https://github.com/example",
+      "language": "Python",
+      "stars": 7
+    },
+    {
+      "full_name": "sample-dev/harbour",
+      "name": "harbour",
+      "url": "https://github.com/example",
+      "language": "Go",
+      "stars": 0
+    }
+  ],
+  "activity": [
+    {
+      "id": "stress-001",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2025-12-13T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 1
+    },
+    {
+      "id": "stress-002",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-01-12T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 8
+    },
+    {
+      "id": "stress-003",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-01-13T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 6
+    },
+    {
+      "id": "stress-004",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-01-14T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 4
+    },
+    {
+      "id": "stress-005",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-02-16T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 2
+    },
+    {
+      "id": "stress-006",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2026-02-17T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 9
+    },
+    {
+      "id": "stress-007",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-02-18T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 7
+    },
+    {
+      "id": "stress-008",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-02-19T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 5
+    },
+    {
+      "id": "stress-009",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-02-20T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 3
+    },
+    {
+      "id": "stress-010",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-02-21T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 1
+    },
+    {
+      "id": "stress-011",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2026-02-22T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 8
+    },
+    {
+      "id": "stress-012",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-03-11T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 6
+    },
+    {
+      "id": "stress-013",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-04-07T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 4
+    },
+    {
+      "id": "stress-014",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-04-08T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 2
+    },
+    {
+      "id": "stress-015",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-04-09T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 9
+    },
+    {
+      "id": "stress-016",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2026-04-10T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 7
+    },
+    {
+      "id": "stress-017",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-05-22T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 5
+    },
+    {
+      "id": "stress-018",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-06-01T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 3
+    },
+    {
+      "id": "stress-019",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-06-02T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 1
+    },
+    {
+      "id": "stress-020",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-06-03T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 8
+    },
+    {
+      "id": "stress-021",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2026-06-04T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 6
+    },
+    {
+      "id": "stress-022",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-06-05T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 4
+    },
+    {
+      "id": "stress-023",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-06-06T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 2
+    },
+    {
+      "id": "stress-024",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-06-07T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 9
+    },
+    {
+      "id": "stress-025",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-06-08T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 7
+    },
+    {
+      "id": "stress-026",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2026-06-09T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 5
+    },
+    {
+      "id": "stress-027",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-06-10T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 3
+    },
+    {
+      "id": "stress-028",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-06-11T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 1
+    },
+    {
+      "id": "stress-029",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-06-12T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 8
+    },
+    {
+      "id": "stress-030",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-07-20T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 6
+    },
+    {
+      "id": "stress-031",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2026-07-21T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 4
+    },
+    {
+      "id": "stress-032",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-07-22T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 2
+    },
+    {
+      "id": "stress-033",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-07-23T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 9
+    },
+    {
+      "id": "stress-034",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-07-24T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 7
+    },
+    {
+      "id": "stress-035",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-08-09T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 5
+    },
+    {
+      "id": "stress-036",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2026-09-01T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 3
+    },
+    {
+      "id": "stress-037",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-09-02T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 1
+    },
+    {
+      "id": "stress-038",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-09-03T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 8
+    },
+    {
+      "id": "stress-039",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-09-04T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 6
+    },
+    {
+      "id": "stress-040",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-09-05T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 4
+    },
+    {
+      "id": "stress-041",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2026-09-06T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 2
+    },
+    {
+      "id": "stress-042",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-09-07T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 9
+    },
+    {
+      "id": "stress-043",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-09-08T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 7
+    },
+    {
+      "id": "stress-044",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-09-09T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 5
+    },
+    {
+      "id": "stress-045",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-10-02T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 3
+    },
+    {
+      "id": "stress-046",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2026-10-19T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 1
+    },
+    {
+      "id": "stress-047",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-10-20T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 8
+    },
+    {
+      "id": "stress-048",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-10-21T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 6
+    },
+    {
+      "id": "stress-049",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-10-22T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 4
+    },
+    {
+      "id": "stress-050",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-10-23T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 2
+    },
+    {
+      "id": "stress-051",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2026-10-24T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 9
+    },
+    {
+      "id": "stress-052",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-10-25T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 7
+    },
+    {
+      "id": "stress-053",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-10-26T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 5
+    },
+    {
+      "id": "stress-054",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-10-27T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 3
+    },
+    {
+      "id": "stress-055",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-10-28T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 1
+    },
+    {
+      "id": "stress-056",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2026-10-29T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 8
+    },
+    {
+      "id": "stress-057",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-10-30T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 6
+    },
+    {
+      "id": "stress-058",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-10-31T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 4
+    },
+    {
+      "id": "stress-059",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-11-01T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 2
+    },
+    {
+      "id": "stress-060",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-11-02T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 9
+    },
+    {
+      "id": "stress-061",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/aurora",
+      "occurred_at": "2026-11-03T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 7
+    },
+    {
+      "id": "stress-062",
+      "kind": "pr_opened",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-11-04T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 5
+    },
+    {
+      "id": "stress-063",
+      "kind": "commit",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-11-05T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 3
+    },
+    {
+      "id": "stress-064",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/orbit",
+      "occurred_at": "2026-11-06T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 1
+    },
+    {
+      "id": "stress-065",
+      "kind": "issue_opened",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-11-07T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 8
+    },
+    {
+      "id": "stress-extra-6",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-02-18T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 2
+    },
+    {
+      "id": "stress-extra-17",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/ember",
+      "occurred_at": "2026-06-01T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 2
+    },
+    {
+      "id": "stress-extra-39",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/harbour",
+      "occurred_at": "2026-09-05T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 2
+    },
+    {
+      "id": "stress-extra-51",
+      "kind": "pr_merged",
+      "repo_full_name": "sample-dev/atlas",
+      "occurred_at": "2026-10-25T09:30:00Z",
+      "url": "https://github.com/example",
+      "count": 2
+    }
+  ]
+}

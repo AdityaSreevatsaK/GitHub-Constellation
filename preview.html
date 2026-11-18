@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1425">
+  <title>Constellation Studio | Three GitHub calendar animations</title>
+  <style>
+    :root{color-scheme:dark;--bg:#09111d;--panel:#111e31;--ink:#eaf5ff;--muted:#a6b7c6;--border:#38506a;--accent:#8be3df}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 75% 0%,#1d3d4b 0,transparent 54%),var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}button,select{font:inherit}
+    .wrap{max-width:1480px;margin:auto;padding:24px clamp(14px,4vw,48px) 64px}header{display:flex;gap:24px;justify-content:space-between;align-items:start;flex-wrap:wrap}h1{margin:0;font-size:clamp(26px,3.6vw,45px);letter-spacing:-1.3px}h2{font-size:16px;margin:0 0 7px}.eyebrow{text-transform:uppercase;letter-spacing:2px;color:var(--accent);font-size:11px;font-weight:800}p{color:var(--muted);margin:.4rem 0 0}.explain{max-width:850px}a{color:var(--accent)}.warning{padding:13px 16px;border:1px solid #537280;background:#19293a;border-radius:12px;max-width:380px;font-size:12px}
+    .controlbar{display:flex;align-items:end;gap:19px;flex-wrap:wrap;margin:28px 0 20px}.field{display:grid;gap:7px}.field>span{font-size:11px;letter-spacing:.9px;text-transform:uppercase;font-weight:750;color:var(--muted)}.group{display:inline-flex;gap:4px;padding:4px;background:var(--panel);border:1px solid var(--border);border-radius:11px}button{color:var(--ink);background:transparent;border:1px solid transparent;border-radius:8px;padding:8px 11px;cursor:pointer}button:hover{background:#24435a}button[aria-pressed=true]{background:#2c5965;color:#f2fffd;border-color:#7cbbc0}button:focus-visible,a:focus-visible{outline:3px solid #f2bd80;outline-offset:2px}.action{background:#1b3344;border:1px solid var(--border)}.action[aria-pressed=true]{background:#35565a}#summary{font-size:13px;color:var(--muted);margin-bottom:10px}.gallery{display:grid;gap:20px}.gallery.compare{grid-template-columns:repeat(auto-fit,minmax(min(100%,455px),1fr))}.stage{border:1px solid var(--border);background:var(--panel);border-radius:17px;padding:12px;min-width:0;box-shadow:0 18px 50px #0002}.stage>div:first-child{display:flex;justify-content:space-between;gap:10px;padding:1px 6px 9px}.stage h2{margin:0}.stage small{color:var(--muted)}.canvas{overflow-x:auto;overscroll-behaviour-inline:contain;border-radius:12px;scrollbar-color:#65818c #1f3044}.canvas svg{width:100%;min-width:750px;height:auto;display:block}.gallery:not(.compare) .canvas svg{min-width:850px}.stage .note{font-size:12px;padding:10px 6px 0;color:var(--muted)}.inspector{margin-top:22px;padding:17px 20px;background:var(--panel);border:1px solid var(--border);border-radius:13px;min-height:92px}.inspector h2{margin-bottom:5px}.inspector p{margin:0;overflow-wrap:anywhere}.inspector strong{color:var(--accent)}.hint{font-size:12px;margin-top:9px}footer{margin-top:24px;font-size:12px;color:var(--muted)}.paused *{animation-play-state:paused!important}
+    @media(max-width:650px){.wrap{padding:16px 12px 48px}.warning{max-width:none}.controlbar{gap:11px}.group{flex-wrap:wrap}.canvas svg,.gallery:not(.compare) .canvas svg{min-width:920px}.stage{padding:7px}button{padding:9px}.eyebrow{letter-spacing:1.2px}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important}}
+  </style>
+</head>
+<body><main class="wrap">
+  <header><div><div class="eyebrow">An interactive prototype laboratory</div><h1>Constellation Studio</h1><p class="explain">Three ways to animate a real 53-week GitHub-style calendar. Every lit day is grounded in its input snapshot. Switch designs, explore dates and compare how each animation tells the same story.</p></div><p class="warning" id="provenance"><strong>Sample data only.</strong> The 10-event shared demo is synthetic and incomplete. No image represents the owner's GitHub activity.</p></header>
+  <section class="controlbar" aria-label="Preview controls">
+    <div class="field"><span>Experience</span><div class="group" role="group" aria-label="Animation design"><button type="button" data-design="comet" aria-pressed="true">Comet Streaks</button><button type="button" data-design="cartographer" aria-pressed="false">Cartographer</button><button type="button" data-design="starforge" aria-pressed="false">Starforge</button></div></div>
+    <div class="field"><span>Theme</span><div class="group" role="group" aria-label="Colour theme"><button type="button" data-theme="night" aria-pressed="true">Night</button><button type="button" data-theme="paper" aria-pressed="false">Paper</button></div></div>
+    <div class="field"><span>Dataset</span><div class="group" role="group" aria-label="Dataset"><button type="button" data-dataset="stress" aria-pressed="true">Synthetic streak lab</button><button type="button" data-dataset="shared" aria-pressed="false">Ten-event demo</button></div></div>
+    <div class="field"><span>Playback</span><div class="group"><button type="button" class="action" id="pause" aria-pressed="false">Pause</button><button type="button" class="action" id="compare" aria-pressed="false">Compare all three</button></div></div>
+  </section>
+  <p id="summary" role="status" aria-live="polite">Loading synthetic activity snapshots…</p>
+  <section id="gallery" class="gallery" aria-label="Constellation previews"></section>
+  <section id="inspector" class="inspector" aria-live="polite"><h2>Inspect a recorded date</h2><p>Hover over or keyboard-focus an illuminated cell to see its exact date, event kinds, repository and activity units. Select a star to open its source GitHub URL.</p></section>
+  <p class="hint">On a narrow display, scroll the calendar horizontally inside its frame. The motionless SVG exports remain readable without JavaScript.</p>
+  <footer>All imagery is generated offline. Empty cells mean no event represented in this snapshot, not a verified zero. Mixed event units are not GitHub's official contribution totals. <a href="README.md">Read source and export guidance</a>.</footer>
+</main>
+<script type="module">
+  import {constellationEngine} from './engine.mjs';
+  const engine=constellationEngine();
+  const state={design:'comet',theme:'night',dataset:'stress',compare:false,paused:matchMedia('(prefers-reduced-motion: reduce)').matches};
+  const gallery=document.querySelector('#gallery'),summary=document.querySelector('#summary'),inspector=document.querySelector('#inspector');
+  const snapshots={};
+  const names={comet:'Comet Streaks',cartographer:'Celestial Cartographer',starforge:'Starforge'};
+  function choose(type,value){state[type]=value;document.querySelectorAll(`[data-${type}]`).forEach(button=>button.setAttribute('aria-pressed',String(button.dataset[type]===value)));render();}
+  for(const key of ['design','theme','dataset'])document.querySelectorAll(`[data-${key}]`).forEach(button=>button.addEventListener('click',()=>choose(key,button.dataset[key])));
+  document.querySelector('#pause').addEventListener('click',event=>{state.paused=!state.paused;event.currentTarget.setAttribute('aria-pressed',String(state.paused));event.currentTarget.textContent=state.paused?'Resume':'Pause';applyPause();});
+  document.querySelector('#compare').addEventListener('click',event=>{state.compare=!state.compare;event.currentTarget.setAttribute('aria-pressed',String(state.compare));event.currentTarget.textContent=state.compare?'Single view':'Compare all three';render();});
+  function applyPause(){for(const svg of gallery.querySelectorAll('svg')){svg.classList.toggle('paused',state.paused);if(state.paused)svg.pauseAnimations?.();else svg.unpauseAnimations?.();}}
+  function inspect(event){const node=event.target.closest?.('a[data-day]');if(!node)return;const date=node.dataset.day,units=node.dataset.units;
+    const model=engine.parse(snapshots[state.dataset]);const day=model.cells.find(cell=>cell.date===date);
+    if(!day)return;inspector.replaceChildren();const heading=document.createElement('h2');heading.textContent=`${date} · ${units} recorded activity unit${units==='1'?'':'s'}`;
+    inspector.append(heading);const detail=document.createElement('p');detail.textContent=day.events.map(e=>`${e.kind.replaceAll('_',' ')} (${e.count}) in ${e.repo}`).join(' · ');inspector.append(detail);
+  }
+  function render(){if(!snapshots[state.dataset])return;const model=engine.parse(snapshots[state.dataset]);const label=state.dataset==='stress'?'SYNTHETIC STREAK STRESS TEST':'SYNTHETIC SHARED DEMO';
+    summary.textContent=`${label}: ${model.active.length} recorded days · ${model.visibleEvents.length} unique events · ${model.streaks.length} true consecutive-date streaks · ${model.totalUnits} mixed recorded activity units.`;
+    document.querySelector('#provenance').textContent=state.dataset==='stress'?'SYNTHETIC STRESS TEST: deliberate example dates for comparing comet behaviour. Not the owner’s history.':'SYNTHETIC SHARED DEMO: ten events only, no consecutive dates. No comet streak is invented.';
+    gallery.classList.toggle('compare',state.compare);gallery.replaceChildren();
+    for(const design of state.compare?['comet','cartographer','starforge']:[state.design]){
+      const stage=document.createElement('article');stage.className='stage';const top=document.createElement('div');const heading=document.createElement('h2');heading.textContent=names[design];top.append(heading);const tag=document.createElement('small');tag.textContent=state.theme==='night'?'Night sky':'Printed chart';top.append(tag);stage.append(top);
+      const canvas=document.createElement('div');canvas.className='canvas';canvas.innerHTML=engine.render(snapshots[state.dataset],{design,theme:state.theme,animated:true,label});canvas.addEventListener('pointerover',inspect);canvas.addEventListener('focusin',inspect);stage.append(canvas);
+      const note=document.createElement('p');note.className='note';note.textContent={comet:'Motion follows only adjacent, observed UTC dates.',cartographer:'The observatory sweeps left to right across recorded weeks.',starforge:'Each spark lands in one precisely dated calendar cell.'}[design];stage.append(note);gallery.append(stage);if(matchMedia('(max-width:650px)').matches)canvas.scrollLeft=canvas.scrollWidth-canvas.clientWidth;
+    }
+    applyPause();
+  }
+  Promise.all([
+    fetch('./fixtures/demo-activity.json').then(response=>{if(!response.ok)throw Error('Unable to load shared fixture');return response.json();}),
+    fetch('./fixtures/streak-demo.json').then(response=>{if(!response.ok)throw Error('Unable to load stress fixture');return response.json();})
+  ]).then(([shared,stress])=>{engine.parse(shared);engine.parse(stress);snapshots.shared=shared;snapshots.stress=stress;render();document.querySelector('#pause').setAttribute('aria-pressed',String(state.paused));document.querySelector('#pause').textContent=state.paused?'Resume':'Pause';})
+    .catch(error=>{summary.textContent=`Offline preview failed: ${error.message}. Serve the repository root using python -m http.server 8000.`;});
+</script>
+</body></html>
