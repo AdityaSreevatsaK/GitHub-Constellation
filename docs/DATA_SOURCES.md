@@ -15,7 +15,7 @@ Both checked-in fixtures are synthetic and incomplete event observations.
 
 Never use fake events to fill gaps in real personalised imagery. Do not rename a synthetic file to imply it came from the user.
 
-## B. Official GitHub contribution calendar: next implementation
+## B. Official GitHub contribution calendar: implemented on feature branch
 
 Use GitHub GraphQL and query the intended GitHub user:
 
@@ -40,7 +40,7 @@ query($login: String!, $from: DateTime!, $to: DateTime!) {
 }
 ~~~
 
-This is a design starting point, not a claim that the collector has already been implemented or tested. Check GitHub's current GraphQL schema, authentication, rate limit, date-window behaviour and calendar boundaries before writing production code. Treat API-returned **date** as canonical; never convert it through a local timezone in a way that shifts cells.
+The source-backed collector now lives in `official_calendar.mjs` and `collect-contributions.mjs`. It reads the GraphQL `contributionCount`, `contributionLevel`, `date` and `weekday` fields, validates the response and emits a separate `2-official-calendar` JSON contract. Two contiguous windows ensure the 53-week display is covered without exceeding one-year query windows. The real owner workflow successfully exercised this collector on 18 November 2026. Treat API-returned **date** as canonical; never convert it through a local timezone in a way that shifts cells.
 
 Proposed distinct model:
 

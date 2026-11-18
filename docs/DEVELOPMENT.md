@@ -23,7 +23,7 @@ Do not add API keys to source files or generated SVG assets. An official collect
 
 ~~~powershell
 # Pure Node regression tests, no dependencies
-node --test tests/test_engine.mjs tests/test_motion.mjs
+node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs
 
 # Regenerate deterministic fixture outputs
 node export.mjs
@@ -103,3 +103,7 @@ Use feature branches for substantial changes. The repository's master branch hol
 - **Windows Playwright browser install fails**: run py -3 -m playwright install chromium and verify browser cache; no WSL is required.
 - **GitHub SVG animation appears static**: GitHub image proxy may suppress SVG motion. Use native GIF and static SVG fallback.
 - **Synthetic labels**: do not remove them to make the image appear personalised. Implement the official collector instead.
+
+## Real GitHub calendar and consumer Action
+
+See docs/PROFILE_INSTALLATION.md for a full consumer workflow. For the read-only CLI, set GH_TOKEN locally, run node collect-contributions.mjs --username USER --out local-output/official.json, then node export.mjs --input local-output/official.json --out local-output/images --design all --theme both. Run py -3 export_gif.py --source local-output/images --out local-output/images for six GIFs. Keep local-output ignored. Never put secrets or raw account snapshots in source control. Scheduled updates in this repository begin after approved merge; installing into the owner's profile is a separate explicit decision.

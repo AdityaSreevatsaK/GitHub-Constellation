@@ -20,7 +20,7 @@
 ## Commands
 
 ~~~powershell
-node --test tests/test_engine.mjs tests/test_motion.mjs
+node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs
 py -3 -m unittest tests/test_gif.py -v
 
 # Chromium optional on a workstation
@@ -55,3 +55,9 @@ The public GitHub Action must have workflow tests for explicit inputs, least-pri
 ## Status policy
 
 Do not label a result 'passed' unless actually executed. Treat GitHub-hosted visual playback as **unverified** until independently inspected. Tests and workflows are part of this repository, but their success must be checked per commit. Record non-passing and skipped cases in the associated PR.
+
+## Official-calendar quality gates
+
+The new tests/test_official.mjs covers GraphQL window coverage, date ordering, proper GitHub weekday/count/intensity preservation, duplicate and missing-date rejection, user identity checks, failure handling and all three designs in both themes. tests/test_action.mjs rejects unsafe output paths, malformed usernames and invalid render options. The owner-calendar workflow separately smoke-tested the composite Action against a real GitHub API response without modifying the live profile.
+
+Verified CI: https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44317579330 (39/39 Node tests, five Python GIF tests, Chromium mobile/desktop checks, 24 synthetic and 12 authentic SVGs). Verified real pipeline: https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44316951258. GitHub-hosted GIF playback has not been independently observed.

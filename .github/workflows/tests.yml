@@ -2,7 +2,7 @@ name: Constellation quality gates
 
 on:
   push:
-    branches: [master]
+    branches: [master, 'feature/**']
   pull_request:
   workflow_dispatch:
 
@@ -24,7 +24,7 @@ jobs:
       - name: Install optional Python test dependencies
         run: python -m pip install --disable-pip-version-check pillow playwright
       - name: Run calendar and motion regression tests
-        run: node --test tests/test_engine.mjs tests/test_motion.mjs
+        run: node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs
       - name: Run GIF encoder regression tests
         run: python -m unittest tests/test_gif.py -v
       - name: Install headless Chromium
@@ -37,11 +37,17 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import xml.etree.ElementTree as ET
-          files = sorted(Path('assets').rglob('*.svg'))
+          files = sorted(Path('assets').glob('*.svg')) + sorted(Path('assets/stress').glob('*.svg'))
           assert len(files) == 24, f"expected 24 modern SVGs, found {len(files)}"
           for file in files:
               assert ET.parse(file).getroot().tag.endswith('svg'), file
-          print("Validated", len(files), "SVG assets")
+          print("Validated", len(files), "synthetic SVG assets")
+          real = sorted(Path("assets/real/AdityaSreevatsaK").glob("*.svg"))
+          if real:
+              assert len(real) == 12, f"expected twelve real SVGs, got {len(real)}"
+              for file in real:
+                  assert ET.parse(file).getroot().attrib["data-source"] == "github_contribution_calendar"
+              print("Validated", len(real), "real-account SVG assets")
           PY
           node export.mjs
           node export.mjs --input fixtures/streak-demo.json --out assets/stress --label "SYNTHETIC STREAK STRESS TEST"

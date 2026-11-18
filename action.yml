@@ -1,0 +1,91 @@
+name: GitHub Constellation
+description: Render official GitHub contribution counts with Comet Streaks, Celestial Cartographer or Starforge
+author: AdityaSreevatsaK
+branding:
+  icon: star
+  color: purple
+
+inputs:
+  token:
+    description: GitHub token able to query the requested contribution calendar
+    required: true
+  username:
+    description: GitHub username, defaults to the calling repository owner
+    required: false
+    default: ''
+  design:
+    description: comet, cartographer, starforge or all
+    required: false
+    default: comet
+  theme:
+    description: night, paper or both
+    required: false
+    default: night
+  output-dir:
+    description: Safe relative directory in checked-out repository
+    required: false
+    default: constellation
+  gif:
+    description: Generate animated GIF as well as SVG
+    required: false
+    default: 'true'
+
+outputs:
+  output-dir:
+    description: Absolute output path in workspace
+    value: ${{ steps.validate.outputs.output_dir }}
+  username:
+    description: Validated username
+    value: ${{ steps.validate.outputs.username }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+    - name: Validate source identity and output
+      id: validate
+      shell: bash
+      env:
+        INPUT_USERNAME: ${{ inputs.username }}
+        INPUT_DESIGN: ${{ inputs.design }}
+        INPUT_THEME: ${{ inputs.theme }}
+        INPUT_OUTPUT_DIR: ${{ inputs.output-dir }}
+      run: node "$GITHUB_ACTION_PATH/validate-action.mjs"
+    - name: Read authenticated official contribution days
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        CONSTELLATION_USER: ${{ steps.validate.outputs.username }}
+      run: node "$GITHUB_ACTION_PATH/collect-contributions.mjs" --username "$CONSTELLATION_USER" --out "$RUNNER_TEMP/constellation-official.json"
+    - name: Render static and animated SVG
+      shell: bash
+      env:
+        OUTPUT_DIR: ${{ steps.validate.outputs.output_dir }}
+        DESIGN: ${{ steps.validate.outputs.design }}
+        THEME: ${{ steps.validate.outputs.theme }}
+      run: node "$GITHUB_ACTION_PATH/export.mjs" --input "$RUNNER_TEMP/constellation-official.json" --out "$OUTPUT_DIR" --design "$DESIGN" --theme "$THEME"
+    - name: Set up Python
+      if: inputs.gif == 'true'
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    - name: Install GIF dependencies
+      if: inputs.gif == 'true'
+      shell: bash
+      run: |
+        python -m pip install --disable-pip-version-check "pillow>=10,<13" "playwright>=1.48,<2"
+        python -m playwright install --with-deps chromium
+    - name: Render 16-second native GIF
+      if: inputs.gif == 'true'
+      shell: bash
+      env:
+        OUTPUT_DIR: ${{ steps.validate.outputs.output_dir }}
+        DESIGN: ${{ steps.validate.outputs.design }}
+        THEME: ${{ steps.validate.outputs.theme }}
+      run: |
+        args=()
+        if [[ "$DESIGN" != "all" ]]; then args+=(--design "$DESIGN"); fi
+        if [[ "$THEME" != "both" ]]; then args+=(--theme "$THEME"); fi
+        python "$GITHUB_ACTION_PATH/export_gif.py" --source "$OUTPUT_DIR" --out "$OUTPUT_DIR" "${args[@]}"

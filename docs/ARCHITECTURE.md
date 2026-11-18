@@ -96,3 +96,9 @@ The calendar rendering interface can be shared while provenance and metrics rema
 5. The original Studio's draft PR, commits and legacy experiments remain historical provenance, not the active repository.
 
 See DATA_SOURCES.md for strict collection requirements and ROADMAP.md for the implementation sequence.
+
+## Implemented official-calendar architecture (18 November 2026)
+
+The official GitHub contribution-calendar source is separate from the event-sample contract. official_calendar.mjs collects and validates complete dated contributions from two GraphQL windows, rejecting missing days, altered identity, incorrect weekdays, negative counts, unexpected levels and API failures. collect-contributions.mjs accepts a token through an environment variable and writes a validated 2-official-calendar snapshot to an ignored local path. engine.mjs reads this typed data directly, retaining the 371-cell geometry while using actual contribution counts and API-defined intensity tiers, with source-specific tooltips and legends.
+
+exporters produce source-faithful SVGs and verified 16-second GIFs. action.yml provides an installable composite GitHub Action with validated username, design, theme and safe output path. The owner-calendar workflow operates only on this repository; its daily schedule is not active until merged to the default branch. The owner workflow successfully collected and rendered actual GitHub contributions for AdityaSreevatsaK on 18 November 2026, and also exercised the composite Action itself.
