@@ -1,10 +1,10 @@
 # Implementation roadmap for AI agents
 
-**Status at migration, 18 November 2026:** the three visual engines, 24 SVG exports, synthetic fixtures and offline unit/browser test code were copied from Studio concept/constellation at be7f524. Six GIF binaries could not be directly transferred as Git objects across repositories; they were successfully regenerated and committed in standalone GitHub Actions run 44268515679. Node and GIF unit tests have passed in the new CI; the complete browser/asset quality gate and GitHub-hosted visual playback still require confirmation.
+**Status at migration, 18 November 2026:** the three visual engines, 24 SVG exports, synthetic fixtures and offline unit/browser test code were copied from Studio concept/constellation at be7f524. Six GIF binaries could not be directly transferred as Git objects across repositories; they were successfully regenerated and committed in standalone GitHub Actions run 44268515679. Standalone quality gates **passed** at commit ba81f083 ([Actions run 44269551217](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44269551217)): 28 Node tests, five Python GIF tests, desktop/mobile Chromium smoke and deterministic 24-SVG verification. All six GIFs exist; only independent human observation of GitHub-hosted image playback remains outstanding.
 
 ## P0. Establish independent repository and migration parity
 
-**Goal:** fully runnable, reproducible, visually complete standalone Constellation.
+**Goal:** fully runnable, reproducible, visually complete standalone Constellation. **Engineering migration verified** by successful standalone Actions (18 November 2026); human playback review remains outstanding.
 
 Deliverables:
 - Root engine.mjs, export.mjs, export_gif.py, preview.html and all modern tests.

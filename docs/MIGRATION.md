@@ -57,6 +57,6 @@ Keep the original Studio concept branch intact as auditable provenance. Do not m
 
 ## Evidence and unresolved work
 
-Source PR reported 28/28 Node and 5/5 Python tests, 16-second GIFs, and desktop/mobile Chromium smoke on original branch. These are **historical source results**, not automatic proof that the standalone migration runs. Verify the new repository CI and rendered README separately.
+Source PR reported 28/28 Node and 5/5 Python tests, 16-second GIFs, and desktop/mobile Chromium smoke on the old branch. **New standalone verification:** [quality-gate run 44269551217](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44269551217) passed 28 Node checks, five GIF checks, desktop/mobile Chromium smoke and reproducible 24-SVG export verification. [GIF-generation run 44268515679](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44268515679) passed and committed six native GIFs. README local-link inventory: 26 relative paths, none missing. The only unverified presentation behaviour is actual GitHub image-proxy playback in a real browser.
 
 Production next steps: GitHub official contributions collection for the owner's actual account, secure reusable Action, daily updates, visual review and licence choice. See ROADMAP.md.
