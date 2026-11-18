@@ -4,7 +4,7 @@ import {readFileSync} from 'node:fs';
 import {constellationEngine} from '../engine.mjs';
 
 const api=constellationEngine();
-const original=JSON.parse(readFileSync(new URL('../../../shared/fixtures/demo-activity.json',import.meta.url),'utf8'));
+const original=JSON.parse(readFileSync(new URL('../fixtures/demo-activity.json',import.meta.url),'utf8'));
 const clone=()=>structuredClone(original);
 const make=(dates)=>{const p=clone();p.activity=dates.map((day,i)=>({id:'streak-'+i,kind:'commit',repo_full_name:'sample-dev/aurora',occurred_at:day+'T12:00:00Z',url:'https://github.com/example',count:1}));return p;};
 
