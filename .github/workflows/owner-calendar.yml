@@ -48,6 +48,22 @@ jobs:
         run: |
           node export.mjs --input local-output/owner-calendar.json --out assets/real/AdityaSreevatsaK --design all --theme both
 
+      - name: Exercise reusable composite Action against owner's real calendar
+        uses: ./
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          username: AdityaSreevatsaK
+          design: comet
+          theme: paper
+          output-dir: local-output/action-smoke
+          gif: 'false'
+
+      - name: Validate composite Action output
+        run: |
+          test -s local-output/action-smoke/comet-paper-still.svg
+          test -s local-output/action-smoke/comet-paper-animated.svg
+          grep -q 'data-source="github_contribution_calendar"' local-output/action-smoke/comet-paper-still.svg
+
       - name: Install browser GIF renderer
         run: |
           python -m pip install --disable-pip-version-check "pillow>=10,<13" "playwright>=1.48,<2"
