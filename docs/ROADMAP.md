@@ -78,3 +78,7 @@ Requirements:
 ## Change process
 
 Each AI agent must actually implement approved work, run relevant tests, export fixtures, commit code and update this roadmap. Prefer focused draft PRs, and do not merge or change master after the initial migration without authorisation. Never assume another session has completed a milestone without verifying current repository state.
+
+## Verified work on the current feature branch
+
+Authenticated GraphQL collection and rendering succeeded on 18 November 2026 for AdityaSreevatsaK: 1,803 API-visible contributions, 99 active dates and 16 consecutive-day runs. Both themes across all three designs are committed as 12 SVGs and six native GIFs. The composite Action was exercised with real API input. See CI run 44317579330 for 39 Node tests, five Python GIF tests, browser checks and SVG validation; see owner preview run 44316951258 for authenticated collection and GIFs. Master and the live GitHub profile remain unchanged until approved.
