@@ -107,9 +107,9 @@ The repo contains test CI and a separate GIF rendering workflow. Workflow-genera
 
 **P0: migration verification.** Confirm file count, source imports, real command paths, all 24 SVG variants and six GIF binaries (or a clearly reported Actions blocker), README rendering, 28 Node tests, five Python tests and browser smoke. Keep original data provenance.
 
-**P1: real GitHub account support.** Implement a read-only, secure GitHub GraphQL contributionCalendar collector and a separately defined official-calendar model; fetch for AdityaSreevatsaK as the first real demonstration. Tests must prove days, counts, date coverage and scope. No hardcoded synthetic days or fallbacks claiming to be live.
+**P1: official GitHub account support is implemented on the feature branch.** Keep the separate official GraphQL source, full-date validation, API-visible labels and tests. Real preview assets for AdityaSreevatsaK are already generated (18 November 2026). Review freshness, API scope and privacy before enabling wider use.
 
-**P2: reusable public action.** Expose username, theme, design, time window, destination and output format through documented inputs. Implement least-privilege token handling, reproducible export, cache/rate-limit behaviour, daily schedule and safe commit semantics. Do not automatically modify the owner's profile without approval.
+**P2: reusable Action and example daily workflow are implemented on the feature branch.** Validate the consumer workflow in a real destination before describing it as a stable release. The owner-only scheduled preview workflow is gated by an approved merge to the default branch. Do not automatically modify the owner's actual profile without approval.
 
 **P3: release polish.** Inspect GitHub-rendered dark/light assets, animation motion, narrow widths, accessible contrast, documentation, contribution templates, licensing choice and release verification.
 

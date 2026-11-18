@@ -2,6 +2,14 @@
 
 **Status at migration, 18 November 2026:** the three visual engines, 24 SVG exports, synthetic fixtures and offline unit/browser test code were copied from Studio concept/constellation at be7f524. Six GIF binaries could not be directly transferred as Git objects across repositories; they were successfully regenerated and committed in standalone GitHub Actions run 44268515679. Standalone quality gates **passed** at commit ba81f083 ([Actions run 44269551217](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44269551217)): 28 Node tests, five Python GIF tests, desktop/mobile Chromium smoke and deterministic 24-SVG verification. All six GIFs exist; only independent human observation of GitHub-hosted image playback remains outstanding.
 
+## Current development progress (18 November 2026)
+
+- **P1 implemented and exercised:** official GraphQL collector (two date-scoped requests) validates every visible day, user identity and per-day counts/intensity without creating fake events.
+- **Real owner preview succeeded:** first real API-visible image run confirmed 1,803 contributions across 99 active dates and 16 consecutive-day runs as at 18 November 2026. Six animated GIFs and twelve SVGs committed only to the feature branch. Live image-proxy playback still awaits human inspection.
+- **P2 code implemented, not merged:** reusable composite Action, strict output-path handling and owner preview workflow. A separate real-account smoke step successfully invoked the composite Action with GIF rendering disabled. Scheduling activates only after the workflow is merged to master; the owner's actual profile remains untouched.
+- **Review boundary:** development is isolated on feature/official-calendar-and-automation and draft PR #1, with no profile installation, release or licence change.
+
+
 ## P0. Establish independent repository and migration parity
 
 **Goal:** fully runnable, reproducible, visually complete standalone Constellation. **Engineering migration verified** by successful standalone Actions (18 November 2026); human playback review remains outstanding.
@@ -20,7 +28,7 @@ Deliverables:
 
 ## P1. Official GitHub contribution-calendar collector, starting with AdityaSreevatsaK
 
-**Priority: critical. The user wants visuals of their actual GitHub account.**
+**Implementation and real-account collection verified on feature branch. Keep the next tests, provenance and consumer integration honest.**
 
 Implementation plan:
 1. Verify the live GitHub GraphQL schema and API limits for user(login) and contributionsCollection.contributionCalendar, date-window options, permissions, hidden/private contribution semantics and calendar boundaries.
@@ -36,7 +44,7 @@ Implementation plan:
 
 ## P2. Public reusable action and profile automation
 
-**Goal:** any GitHub user can install the action and display chosen animation in their README.
+**Goal:** any GitHub user can install the action and display chosen animation in their README. **Composite Action and example consumer workflow implemented; no automatic live profile installation.**
 
 Requirements:
 - Action inputs: username, design, theme, date range, output directory, file format and explicit privacy behaviour.

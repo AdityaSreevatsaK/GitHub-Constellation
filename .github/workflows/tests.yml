@@ -2,7 +2,7 @@ name: Constellation quality gates
 
 on:
   push:
-    branches: [master]
+    branches: [master, 'feature/**']
   pull_request:
   workflow_dispatch:
 

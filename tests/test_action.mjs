@@ -4,6 +4,7 @@ import {spawnSync} from 'node:child_process';
 import {mkdtempSync,readFileSync,mkdirSync,symlinkSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
+import {fileURLToPath} from 'node:url';
 
 function run(input){
   const root=mkdtempSync(join(tmpdir(),'constellation-action-'));
@@ -13,7 +14,7 @@ function run(input){
     const env={...process.env,GITHUB_WORKSPACE:root,GITHUB_OUTPUT:out,
       GITHUB_REPOSITORY_OWNER:'Account123',INPUT_USERNAME:'Account123',
       INPUT_DESIGN:'comet',INPUT_THEME:'night',INPUT_OUTPUT_DIR:'assets/constellation',...input};
-    const result=spawnSync(process.execPath,[new URL('../validate-action.mjs',import.meta.url).pathname],{env,encoding:'utf8'});
+    const result=spawnSync(process.execPath,[fileURLToPath(new URL('../validate-action.mjs',import.meta.url))],{env,encoding:'utf8'});
     return {status:result.status,stderr:result.stderr,
       output:result.status===0?readFileSync(out,'utf8'):''};
   }finally{rmSync(root,{recursive:true,force:true});}

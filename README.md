@@ -2,7 +2,40 @@
 
 **A year of coding activity, written in stars.** Three distinct animated reinterpretations of the familiar GitHub contribution calendar, with a 53-week by seven-day lattice and source-backed star positions.
 
-**Status:** Working animation engine and visual prototypes migrated from [GitHub-Activity-Studio](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/pull/1) at source commit [be7f524](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/commit/be7f524597285c2078565068ab23a683316404a2). The current previews use **explicitly synthetic events**, NOT real activity for AdityaSreevatsaK. An official GitHub contribution-calendar collector and profile automation remain next-stage work.
+**Status:** Working animation engine and visual prototypes migrated from [GitHub-Activity-Studio](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/pull/1) at source commit [be7f524](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/commit/be7f524597285c2078565068ab23a683316404a2). **The feature branch now includes real GitHub API-visible contribution-calendar previews for @AdityaSreevatsaK**, collected on 18 November 2026. The original synthetic demonstrations are kept clearly separate. Reusable Action and daily automation are implemented on this draft branch; live profile installation remains optional and has not been performed.
+
+## Your actual GitHub Constellation
+
+**Verified source:** GitHub GraphQL contribution calendar for [@AdityaSreevatsaK](https://github.com/AdityaSreevatsaK), dated **18 November 2026**. The verified API response covers the complete displayed 53-week calendar through that date; counts may exclude private activity that the workflow token cannot see.
+
+- **1,803 API-visible GitHub contributions**
+- **99 active dates**
+- **16 consecutive active-day runs**
+- **Three original animations, both themes**, with motionless SVG alternatives
+
+### Real Comet Streaks
+
+![Real GitHub activity of AdityaSreevatsaK, Comet Streaks dark GIF](assets/real/AdityaSreevatsaK/comet-night.gif)
+
+[Paper GIF](assets/real/AdityaSreevatsaK/comet-paper.gif) · [Night still](assets/real/AdityaSreevatsaK/comet-night-still.svg) · [Paper still](assets/real/AdityaSreevatsaK/comet-paper-still.svg)
+
+### Real Celestial Cartographer
+
+![Real GitHub activity of AdityaSreevatsaK, Cartographer paper GIF](assets/real/AdityaSreevatsaK/cartographer-paper.gif)
+
+[Night GIF](assets/real/AdityaSreevatsaK/cartographer-night.gif) · [Night still](assets/real/AdityaSreevatsaK/cartographer-night-still.svg) · [Paper still](assets/real/AdityaSreevatsaK/cartographer-paper-still.svg)
+
+### Real Starforge
+
+![Real GitHub activity of AdityaSreevatsaK, Starforge dark GIF](assets/real/AdityaSreevatsaK/starforge-night.gif)
+
+[Paper GIF](assets/real/AdityaSreevatsaK/starforge-paper.gif) · [Night still](assets/real/AdityaSreevatsaK/starforge-night-still.svg) · [Paper still](assets/real/AdityaSreevatsaK/starforge-paper-still.svg)
+
+The first complete real-data pipeline is verified in [GitHub Actions](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/workflows/owner-calendar.yml). All six real GIFs were tested for a complete 16-second loop and all twelve SVG assets were checked for the official source marker. GitHub's actual image-proxy playback should still be checked manually on this README.
+
+This is not a screenshot or estimate of GitHub's proprietary profile chart. It uses the authorised GitHub GraphQL calendar, whose visibility and freshness depend on API scope. It never converts example repository events into fictitious contributions.
+
+---
 
 ## Three animation designs
 
@@ -88,9 +121,9 @@ Start with [AGENTS.md](AGENTS.md) when using AI coding agents, then [architectur
 
 ## Important limitations and public-release plan
 
-**Not yet a drop-in GitHub profile action.** Current contract v1 accepts recorded repository events. It does not equal GitHub's official annual contributions graph. Before a personalised profile graphic is published, implement a separately typed collector for GitHub GraphQL contributionsCollection.contributionCalendar; verify scope, permissions, completeness and day counts. Never fabricate activity or quietly reinterpret mixed PR/commit/release events as contributions.
+**Profile Action implemented in the feature branch, not installed into anyone's profile.** The read-only official GraphQL collector is separate from the older synthetic event contract. The [reusable Action](action.yml), [profile installation instructions](docs/PROFILE_INSTALLATION.md) and [owner-only automated refresh](.github/workflows/owner-calendar.yml) are available for review. Daily schedules become active on this repository's default branch only after an approved merge. No other repository or live profile is modified.
 
-Future milestones: authentic personalised calendar, reusable GitHub Action with secure permissions, automated profile GIF updates, customisation and public documentation. See [ROADMAP](docs/ROADMAP.md).
+Next milestones: merge approval, GitHub-hosted animation playback review, wider consumer acceptance tests, customisation and public release documentation. See [ROADMAP](docs/ROADMAP.md).
 
 The migration excludes unrelated Studio concepts and obsolete radial/clustered/calendar prototype art. The original [draft PR #1](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/pull/1) is retained as migration provenance.
 
