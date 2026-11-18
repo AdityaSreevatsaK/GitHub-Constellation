@@ -1,6 +1,6 @@
 # Implementation roadmap for AI agents
 
-**Status at migration, 18 November 2026:** the three visual engines, 24 SVG exports, synthetic fixtures and offline unit/browser test code were copied from Studio concept/constellation at be7f524. Six GIF binaries cannot be directly transferred as Git objects across repositories and are to be regenerated in GitHub Actions. Do not mark migration complete until the generated GIFs and workflow status are independently verified.
+**Status at migration, 18 November 2026:** the three visual engines, 24 SVG exports, synthetic fixtures and offline unit/browser test code were copied from Studio concept/constellation at be7f524. Six GIF binaries could not be directly transferred as Git objects across repositories; they were successfully regenerated and committed in standalone GitHub Actions run 44268515679. Node and GIF unit tests have passed in the new CI; the complete browser/asset quality gate and GitHub-hosted visual playback still require confirmation.
 
 ## P0. Establish independent repository and migration parity
 

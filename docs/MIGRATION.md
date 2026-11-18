@@ -49,7 +49,7 @@ This is an intentional extraction of the **modern three-design Constellation imp
 
 GitHub Git blobs in the source repository cannot be referenced directly by a tree in a separate Git repository. The 24 UTF-8 SVG exports are copied directly. The six binary GIFs are regenerated from their committed SVG sources by the standalone .github/workflows/generate-gifs.yml workflow, which checks loop timing and commits the resulting outputs when Actions permissions allow.
 
-Do not claim the six GIF files are present until they are confirmed in the new repository. If the workflow fails, inspect permissions/logs and execute the documented offline export before declaring migration parity.
+**Confirmed 18 November 2026:** the six GIFs were committed by successful GitHub Actions run 44268515679 (commit 67cc5db), with source-backed 16-second playback validated by the GIF tests. This confirms the GIF-file migration. Independent visual verification in GitHub's image proxy remains outstanding.
 
 ## Old PR and source preservation
 
