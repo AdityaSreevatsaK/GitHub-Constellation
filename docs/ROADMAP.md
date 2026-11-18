@@ -14,7 +14,7 @@ Deliverables:
 - Comprehensive README, AGENTS.md and architecture/data/development/quality/migration docs.
 - GitHub test CI plus separate GIF-preview workflow.
 - Verify local/CI tests and actual GitHub README playback.
-- Do not merge Studio PR #1; when migration is verified, a migration-link comment and administrative closure are appropriate.
+- Studio PR #1 was linked to this standalone repository and closed as superseded without merging on 18 November 2026; original source branch/history are preserved.
 
 **Pass:** fresh clone succeeds; Node tests 28/28, Python GIF tests 5/5, browser smoke at desktop and mobile, and all expected assets exist with correct links. **Blocked:** GitHub Actions cannot commit GIFs, missing files or unverified live playback.
 

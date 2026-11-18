@@ -53,7 +53,7 @@ GitHub Git blobs in the source repository cannot be referenced directly by a tre
 
 ## Old PR and source preservation
 
-Keep the original Studio concept branch intact as auditable provenance. Do not merge old PR #1 into Studio master: there is no longer a reason to integrate independent Constellation into the umbrella repository. After migration parity is verified, link the new repository from PR #1 and close it as superseded, without deleting historical code or other concepts.
+Keep the original Studio concept branch intact as auditable provenance. Do not merge old PR #1 into Studio master: there is no longer a reason to integrate independent Constellation into the umbrella repository. **Completed 18 November 2026:** the new repository and passing CI were linked in a comment on Studio PR #1, which was closed as superseded, not merged. The original concept/constellation branch and all other Studio concepts remain intact.
 
 ## Evidence and unresolved work
 
