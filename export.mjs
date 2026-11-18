@@ -7,9 +7,11 @@ const here=dirname(fileURLToPath(import.meta.url));
 const args=process.argv.slice(2);
 const get=(name,fallback)=>{const i=args.indexOf(name);if(i===-1)return fallback;if(!args[i+1])throw Error(`Missing ${name} value`);return args[i+1]};
 if(args.includes('--help')){console.log('node export.mjs [--input JSON] [--out DIR] [--label TEXT]');process.exit(0)}
-const input=resolve(get('--input',join(here,'fixtures/demo-activity.json')));
+const demoFixture=resolve(join(here,'fixtures/demo-activity.json'));
+const stressFixture=resolve(join(here,'fixtures/streak-demo.json'));
+const input=resolve(get('--input',demoFixture));
 const out=resolve(get('--out',join(here,'assets')));
-const label=get('--label',input.endsWith('streak-demo.json')?'SYNTHETIC STREAK STRESS TEST':undefined);
+const label=get('--label',input===demoFixture?'SYNTHETIC SHARED DEMO':input===stressFixture?'SYNTHETIC STREAK STRESS TEST':undefined);
 const payload=JSON.parse(readFileSync(input,'utf8'));
 const engine=constellationEngine();const model=engine.parse(payload);
 mkdirSync(out,{recursive:true});
