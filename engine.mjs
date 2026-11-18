@@ -13,7 +13,45 @@ export function constellationEngine() {
   const utcMillis=v=>{if(typeof v!=='string'||!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,3})?(?:Z|\+00:00)$/.test(v))throw Error('UTC timestamp required');const t=Date.parse(v);if(!Number.isFinite(t)||new Date(t).toISOString().slice(0,10)!==v.slice(0,10))throw Error('Invalid timestamp');return t;};
   const iso=t=>new Date(t).toISOString().slice(0,10);
   const DAY=86400000;
+
+  /** A separate, validated contract for the official contribution calendar. No fake events. */
+  function parseOfficial(snapshot) {
+    if(!snapshot||snapshot.schema_version!=='2-official-calendar'||snapshot.source!=='github_contribution_calendar'||snapshot.visibility!=='api_visible')throw Error('Official calendar source required');
+    const login=validName(snapshot.user?.login,'user.login');
+    if(!/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(login)||login.includes('--'))throw Error('Invalid GitHub login');
+    if(snapshot.user.url!=='https://github.com/'+login)throw Error('Official profile URL mismatch');
+    const dateValue=v=>{if(typeof v!=='string'||!/^\d{4}-\d\d-\d\d$/.test(v))throw Error('Invalid official date');const ms=Date.parse(v+'T00:00:00Z');if(!Number.isFinite(ms)||iso(ms)!==v)throw Error('Invalid official date');return ms;};
+    const generated=dateValue(snapshot.as_of);
+    if(!Number.isFinite(Date.parse(snapshot.fetched_at))||typeof snapshot.fetched_at!=='string')throw Error('Invalid official collection timestamp');
+    const start=generated-(52*7+new Date(generated).getUTCDay())*DAY;
+    if(snapshot.window?.from!==iso(start)||snapshot.window?.to!==snapshot.as_of)throw Error('Official calendar range mismatch');
+    if(!Array.isArray(snapshot.calendar_days)||snapshot.calendar_days.length!==(generated-start)/DAY+1)throw Error('Incomplete official calendar');
+    const levels={NONE:0,FIRST_QUARTILE:1,SECOND_QUARTILE:2,THIRD_QUARTILE:3,FOURTH_QUARTILE:4};
+    const byDate=new Map();
+    for(let i=0;i<snapshot.calendar_days.length;i++){
+      const d=snapshot.calendar_days[i],date=iso(start+i*DAY);
+      if(!d||d.date!==date||!Number.isSafeInteger(d.contribution_count)||d.contribution_count<0||d.contribution_count>1e6||!Object.prototype.hasOwnProperty.call(levels,d.contribution_level))throw Error('Invalid official day or incomplete ordered coverage');
+      if((d.contribution_count===0)!==(d.contribution_level==='NONE'))throw Error('Official count/level mismatch');
+      byDate.set(date,d);
+    }
+    const cells=[];
+    for(let i=0;i<COLS*ROWS;i++){
+      const date=iso(start+i*DAY),d=byDate.get(date),units=d?.contribution_count??0,level=d?levels[d.contribution_level]:0;
+      cells.push({date,index:i,col:Math.floor(i/7),row:i%7,units,level,
+        future:start+i*DAY>generated,events:[],active:units>0,
+        x:X+Math.floor(i/7)*STEP,y:Y+(i%7)*VSTEP});
+    }
+    const active=cells.filter(d=>d.active),streaks=[];let current=[];
+    for(const day of active){if(current.length&&day.index!==current.at(-1).index+1){if(current.length>1)streaks.push(current);current=[];}current.push(day);}
+    if(current.length>1)streaks.push(current);
+    const totalUnits=active.reduce((sum,d)=>sum+d.units,0);
+    if(!Number.isSafeInteger(snapshot.displayed_contributions)||snapshot.displayed_contributions!==totalUnits)throw Error('Official displayed total mismatch');
+    return {login,source:snapshot.source,metric:'official',generated:iso(generated),start:iso(start),
+      end:iso(start+(COLS*ROWS-1)*DAY),cells,active,streaks,events:[],visibleEvents:[],totalUnits};
+  }
+
   function parse(snapshot) {
+    if(snapshot?.schema_version==='2-official-calendar')return parseOfficial(snapshot);
     if(!snapshot||typeof snapshot!=='object'||Array.isArray(snapshot)||snapshot.schema_version!=='1'||!['demo','github'].includes(snapshot.source))throw Error('Contract-v1 demo/github snapshot required');
     const generated=utcMillis(snapshot.generated_at);
     if(!snapshot.user||typeof snapshot.user!=='object')throw Error('Missing user');
@@ -46,10 +84,11 @@ export function constellationEngine() {
   function render(snapshot,options={}) {
     const model=parse(snapshot),design=options.design??'comet',theme=options.theme??'night',animated=options.animated!==false;
     if(!['comet','cartographer','starforge'].includes(design)||!themes[theme])throw Error('Unknown design/theme');
-    const p=themes[theme],label=options.label|| (model.source==='demo'?'SYNTHETIC DEMO':'PUBLIC EVENT SAMPLE');
+    const official=model.metric==='official';
+    const p=themes[theme],label=options.label|| (official?'GITHUB CALENDAR · '+model.login+' · '+model.generated:model.source==='demo'?'SYNTHETIC DEMO':'PUBLIC EVENT SAMPLE');
     const title={comet:'COMET STREAKS',cartographer:'CELESTIAL CARTOGRAPHER',starforge:'STARFORGE'}[design];
     const subtitle={comet:'An uninterrupted run of active dates becomes a comet.',cartographer:'An observatory maps the recorded days of a coding year.',starforge:'Every recorded day is forged at its true calendar position.'}[design];
-    const description=`${label}. ${model.active.length} active days in a 53-week by 7-day calendar, ${model.visibleEvents.length} unique recorded events, ${model.totalUnits} recorded activity units. Unlit means no event in this sample, not verified zero GitHub contributions. ${model.streaks.length} uninterrupted streaks of two or more UTC dates.`;
+    const description=official?`${label}. ${model.active.length} active dates, ${model.totalUnits} API-visible GitHub contributions. Counts are supplied by GitHub GraphQL. Visibility of private activity depends on GitHub settings and API token scope. ${model.streaks.length} consecutive active-day runs.`:`${label}. ${model.active.length} active days in a 53-week by 7-day calendar, ${model.visibleEvents.length} unique recorded events, ${model.totalUnits} recorded activity units. Unlit means no event in this sample, not verified zero GitHub contributions. ${model.streaks.length} uninterrupted streaks of two or more UTC dates.`;
     const out=[];const add=s=>out.push(s);
     add(`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}" role="img" aria-labelledby="const-title const-desc" data-design="${design}" data-theme="${theme}" data-source="${model.source}" data-cells="371" data-active="${model.active.length}" data-streaks="${model.streaks.length}" data-events="${model.visibleEvents.length}">`);
     add(`<title id="const-title">${esc(title)} · ${esc(theme)} · ${esc(label)}</title><desc id="const-desc">${esc(description)}</desc>`);
@@ -121,8 +160,8 @@ export function constellationEngine() {
     }
     // Observed days: the only star symbols located INSIDE contribution cells.
     for(const day of model.active){const {x,y}=pos(day),colour=p.levels[day.level-1],size=day.level>=4?5.8:4.1+day.level*.35;
-      const details=`${day.date}: ${day.events.length} recorded events, ${day.units} recorded activity units; ${[...new Set(day.events.map(e=>e.repo))].join(', ')}`;
-      const mainURL=day.events[0].url;
+      const details=official?`${day.date}: ${day.units} GitHub API-visible contributions (${['none','first','second','third','fourth'][day.level]} intensity tier)`:`${day.date}: ${day.events.length} recorded events, ${day.units} recorded activity units; ${[...new Set(day.events.map(e=>e.repo))].join(', ')}`;
+      const mainURL=official?'https://github.com/'+model.login:day.events[0].url;
       add(`<a class="active-day" href="${esc(mainURL)}" target="_blank" rel="noopener noreferrer" tabindex="0" aria-label="${esc(details)}" data-day="${day.date}" data-units="${day.units}" data-detail="${esc(details)}"><title>${esc(details)}</title>`);
       if(design==='comet'){
         add(`<circle class="data-star ${animated?'twinkle':''}" cx="${n(x)}" cy="${n(y)}" r="${n(size*.7)}" fill="${p.paper?p.text:'#f7fffa'}"/><path d="M${n(x)} ${n(y-size)} V${n(y+size)} M${n(x-size)} ${n(y)} H${n(x+size)}" stroke="${colour}" stroke-width="1.25"/>`);
@@ -145,14 +184,14 @@ export function constellationEngine() {
     }else{
       add(`<text x="40" y="329" ${small} fill="${p.accent}">THE STELLAR FOUNDRY</text><text x="40" y="348" font-size="11" fill="${p.muted}">One finished star for each recorded calendar day</text>`);
     }
-    add(`<text x="1157" y="319" text-anchor="end" font-size="10.2" fill="${p.muted}">RECORDED ACTIVITY UNITS</text>`);
+    add(`<text x="1157" y="319" text-anchor="end" font-size="10.2" fill="${p.muted}">${official?'GITHUB API CONTRIBUTION LEVEL':'RECORDED ACTIVITY UNITS'}</text>`);
     for(let i=0;i<5;i++){
       const x=840+i*51;add(`<rect x="${x}" y="327" width="12" height="12" rx="2.4" fill="${i===0?p.tile:p.levels[i-1]}" stroke="${p.tileBorder}" stroke-width=".6"/>`);
-      add(`<text x="${x+15}" y="337" font-size="9.5" fill="${p.muted}">${['·','1','2–3','4–6','7+'][i]}</text>`);
+      add(`<text x="${x+15}" y="337" font-size="9.5" fill="${p.muted}">${(official?['·','Q1','Q2','Q3','Q4']:['·','1','2–3','4–6','7+'])[i]}</text>`);
     }
     add(`<path d="M35 359 H1165" stroke="${p.line}" stroke-opacity=".45"/>`);
     add(`<text x="40" y="375" font-size="9.5" font-weight="750" letter-spacing=".85" fill="${p.accent}">${esc(label.toUpperCase())}</text>`);
-    add(`<text x="1160" y="375" text-anchor="end" font-size="9.3" fill="${p.muted}">${model.active.length} ACTIVE DATES  ·  ${model.visibleEvents.length} EVENTS  ·  UNLIT = NOT IN SAMPLE  ·  NOT GITHUB OFFICIAL COUNTS</text>`);
+    add(`<text x="1160" y="375" text-anchor="end" font-size="9.3" fill="${p.muted}">${official?`${model.active.length} ACTIVE DATES  ·  ${model.totalUnits} API-VISIBLE GITHUB CONTRIBUTIONS  ·  PRIVATE VISIBILITY VARIES`:`${model.active.length} ACTIVE DATES  ·  ${model.visibleEvents.length} EVENTS  ·  UNLIT = NOT IN SAMPLE  ·  NOT GITHUB OFFICIAL COUNTS`}</text>`);
     add('</svg>');
     return out.join('');
   }
