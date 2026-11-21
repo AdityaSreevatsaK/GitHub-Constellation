@@ -94,7 +94,7 @@ The exact latest run status must be checked in GitHub Actions before reporting i
 - The owner workflow has contents: write because it commits public assets to this repository. The composite Action itself does not push.
 - Action output paths are relative, checked against workspace traversal and symlinks.
 - SVG/HTML labels and links are escaped or validated by the renderer.
-- API-visible counts may not include all private activity. Do not overstate completeness.
+- GitHub documents that private/internal contributions require the optional read:user scope and the account's private-contribution visibility setting. The owner workflow uses repository GITHUB_TOKEN, not a user-authorised token with that scope, so its output must be treated as public/API-visible. The collector does not currently query hasAnyRestrictedContributions and cannot detect omitted private activity. Do not overstate completeness.
 
 ## Known limitations
 

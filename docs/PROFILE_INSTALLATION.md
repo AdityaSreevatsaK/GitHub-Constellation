@@ -89,7 +89,7 @@ The Action does not accept a date range or as-of input. The local collector supp
 
 The token must be accepted by GitHub GraphQL for the requested user. The owner workflow has successfully used its repository GITHUB_TOKEN for the owner's API-visible calendar. This does not guarantee that every consumer's token can query every account or expose private contribution counts.
 
-GitHub's contribution calendar visibility depends on account settings and token authorisation. The output is labelled API-visible and must not be described as a guaranteed complete private-plus-public total. If a consumer needs additional visibility, they must supply an appropriately authorised token through repository or organisation secrets. Never put a token in workflow YAML or command-line arguments.
+GitHub's [GraphQL documentation](https://docs.github.com/en/graphql/reference/users#contributionscollection) states that private and internal repository contributions require the optional read:user scope. The user must also enable private contribution counts in their GitHub settings. A repository GITHUB_TOKEN is not a user-authorised token with that OAuth scope, so use it for public/API-visible output only. If a consumer needs private-inclusive counts, supply an appropriately authorised user token with read:user through repository or organisation secrets and verify the result. Never put a token in workflow YAML or command-line arguments.
 
 The Action only needs to read the contribution calendar. The calling workflow needs contents: write only because the example commits generated files. Keep those permissions separate in your own workflow design.
 

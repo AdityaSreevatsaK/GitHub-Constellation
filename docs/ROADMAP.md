@@ -20,7 +20,7 @@
 
 - GitHub-hosted GIF playback: the native files are generated and their timing/motion are checked, but actual playback in the rendered README has not been visually confirmed.
 - Consumer Action: the Action is exercised in the owner repository, but a clean external consumer repository and a range of token/visibility configurations have not been tested.
-- Private contribution completeness: API visibility depends on the selected user's settings and token authorisation. The public snapshot must remain labelled API-visible.
+- Private contribution completeness: GitHub requires optional read:user scope and the user's private-contribution visibility setting for private/internal counts. The current owner workflow uses repository GITHUB_TOKEN and is public/API-visible only. The collector does not yet query hasAnyRestrictedContributions to detect omitted activity.
 
 ### Not implemented
 

@@ -72,7 +72,7 @@ There are two separate input contracts. Never mix their semantics:
 - **Contract v1, event samples:** recorded events with mixed activity units. The checked-in fixtures are synthetic. They must be labelled as such. A blank date means no event in that sample, not a verified zero GitHub contribution.
 - **Contract v2, official calendar:** GitHub GraphQL contribution-calendar days and API-visible contribution counts/intensity. It is not a list of commits or repositories. Preserve the API date, count, level and visibility caveat.
 
-No fake personal contributions. Do not convert a daily count into fictitious commits, pull requests or repositories. Do not describe mixed event units as official contribution totals. A successful API query proves only what that token and GitHub's visibility settings expose. Never claim private contributions are included unless the actual token and settings justify it.
+No fake personal contributions. Do not convert a daily count into fictitious commits, pull requests or repositories. Do not describe mixed event units as official contribution totals. GitHub documents that private/internal contributions require the optional read:user scope and the account's private-contribution visibility setting. The owner workflow's repository GITHUB_TOKEN does not establish that scope. Never claim private contributions are included unless the actual token and settings justify it.
 
 Never commit tokens, raw authenticated responses, private repository names or unnecessary personal history. Do not expose credentials in command output, logs, SVGs, browser code or README metadata. A failed or incomplete official collection must fail closed and must not replace known-good public assets with synthetic or partial data.
 

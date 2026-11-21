@@ -1,6 +1,6 @@
 # GitHub Constellation
 
-**A year of coding activity, written in stars.** Three distinct animated reinterpretations of the familiar GitHub contribution calendar, with a 53-week by seven-day lattice and source-backed star positions.
+**A year of GitHub contributions, written in stars.** Three distinct animated reinterpretations of the familiar GitHub contribution calendar, with a 53-week by seven-day lattice and source-backed star positions.
 
 **Status:** Working animation engine and visual prototypes migrated from [GitHub-Activity-Studio](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/pull/1) at source commit [be7f524](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/commit/be7f524597285c2078565068ab23a683316404a2). **The master branch now includes real GitHub API-visible contribution-calendar previews for @AdityaSreevatsaK**, first collected on 18 November 2026 and refreshed automatically. See the verified snapshot timestamp below. The original synthetic demonstrations are kept clearly separate. The reusable Action and owner-only daily preview refresh are available on master. Live profile installation remains optional and has not been performed.
 
@@ -34,7 +34,7 @@
 
 The first complete real-data pipeline is verified in [GitHub Actions](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/workflows/owner-calendar.yml). All six real GIFs were tested for a complete 16-second loop and all twelve SVG assets were checked for the official source marker. GitHub's actual image-proxy playback should still be checked manually on this README.
 
-This is not a screenshot or estimate of GitHub's proprietary profile chart. It uses the authorised GitHub GraphQL calendar, whose visibility and freshness depend on API scope. It never converts example repository events into fictitious contributions.
+This is not a screenshot or estimate of GitHub's proprietary profile chart. It uses the authorised GitHub GraphQL calendar. GitHub documents that private and internal contributions require the optional read:user scope and the account's private-contribution visibility setting. The scheduled owner workflow currently uses the repository GITHUB_TOKEN, so treat its preview as API-visible public activity, not a verified private-inclusive total. It never converts example repository events into fictitious contributions.
 
 ---
 

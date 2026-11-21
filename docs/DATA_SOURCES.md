@@ -40,9 +40,11 @@ The collector uses GitHub's returned calendar date as canonical. Do not convert 
 
 The snapshot visibility is explicitly api_visible. The number is the sum of daily contributionCount values returned for that authenticated query and selected account. It is not independently certified as the complete private-plus-public total.
 
-Private contribution visibility depends on the account's GitHub settings and the identity/permissions of the token used. The repository's owner workflow successfully collected the owner's API-visible calendar using its workflow token, but that does not establish private-count completeness for every account or consumer workflow.
+GitHub's [GraphQL ContributionsCollection reference](https://docs.github.com/en/graphql/reference/users#contributionscollection) states that contributions from private and internal repositories are included only with the optional read:user scope. GitHub also documents that restricted-contribution indicators are available only when the user has enabled private contribution counts.
 
-No private repository names are queried or stored. The public preview does reveal the daily activity counts that the API returned for the owner. Consider this when changing publication behaviour.
+The current owner workflow passes the repository GITHUB_TOKEN. That token is not a user-authorised token carrying the optional read:user scope, so the current owner preview must be treated as public/API-visible activity, not a verified private-inclusive total. The collector does not request hasAnyRestrictedContributions and cannot independently detect whether hidden activity was omitted. For private-inclusive collection, the user must enable private contribution counts and provide a suitable user-authorised token with read:user through a secret. Verify the actual result before describing it as private-inclusive.
+
+No private repository names are queried or stored. The public preview does reveal the daily activity counts returned by the API for the owner. Consider this when changing publication behaviour.
 
 ## 4. Authentication and secrets
 
