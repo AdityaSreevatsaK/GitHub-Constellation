@@ -38,7 +38,7 @@ The CI archive check parses 24 synthetic SVGs and, when present, twelve official
 - Latest scheduled owner refresh at this audit, [run 44892083199](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44892083199), completed successfully on 21 November 2026. It collected official data, exercised the composite Action, rendered and validated all official assets, refreshed README statistics and committed the outputs.
 - Earlier scheduled refreshes [run 44717177984](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44717177984) and [run 44506254424](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44506254424) also succeeded.
 
-These are point-in-time results. Always inspect the latest run for the current commit before reporting CI status. Bot-generated refresh commits do not necessarily trigger other workflows.
+These are point-in-time results. Always inspect the latest run for the current commit before reporting CI status. Bot-generated refresh commits do not necessarily trigger other workflows. Early migration runs failed because a recursive asset glob mixed official SVGs into the synthetic count; the workflow now checks the 24 synthetic and twelve official SVGs separately. See docs/MIGRATION.md for the failure links and correction.
 
 ## What these tests do not prove
 

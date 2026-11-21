@@ -40,6 +40,17 @@ The original event-sample contract and synthetic fixtures were retained. Synthet
 - **18 November 2026:** README summary automation was added so displayed contribution totals and fetch time stay aligned with generated images.
 - **19-21 November 2026:** scheduled owner refreshes completed successfully and updated the real-account assets and README summary.
 
+## Technical challenges and lessons learned
+
+- **Monorepo-to-standalone paths:** the motion tests and browser scripts initially carried assumptions about the Studio directory layout. Imports and fixture paths were corrected so the standalone root is self-contained. See [the path correction](https://github.com/AdityaSreevatsaK/GitHub-Constellation/commit/6e71b968f4).
+- **Binary asset transfer:** source-repository Git blob references cannot be reused directly in a separate repository tree. The six GIFs were regenerated from the committed SVGs in the destination workflow and then validated.
+- **Source-aware SVG labels:** exports must not label an arbitrary custom input as the default synthetic demo. Export label handling and committed demo SVGs were corrected and regenerated in [0d98c79](https://github.com/AdityaSreevatsaK/GitHub-Constellation/commit/0d98c79c37) and [ba81f08](https://github.com/AdityaSreevatsaK/GitHub-Constellation/commit/ba81f08313).
+- **Synthetic versus official asset inventory:** early quality-gate runs [44316964982](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44316964982), [44317418668](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44317418668) and [44317429288](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44317429288) failed because a recursive SVG glob counted the twelve new official SVGs as part of the 24-file synthetic archive, producing 36 instead of 24. The check was corrected to inventory root synthetic SVGs, stress synthetic SVGs and official owner SVGs separately. Never restore a recursive all-assets count as a synthetic-only assertion.
+- **Browser provisioning:** repeated Playwright Chromium installation was slow on hosted runners. CI now uses preinstalled Chrome when available, passes its executable through CONSTELLATION_CHROMIUM, and falls back to Playwright's Chromium installation. Both browser smoke and GIF export honour that variable. See [the CI adjustment](https://github.com/AdityaSreevatsaK/GitHub-Constellation/commit/c43fb8b911).
+- **GitHub image hosting:** embedded SVG animation may be suppressed by GitHub's image proxy. Native GIFs are therefore the README animation format, with static SVG alternatives. The actual rendered README still needs human playback inspection.
+- **Data authenticity:** official contribution counts are not event records. The v2 calendar contract remains separate from synthetic/event contract v1. The current owner GITHUB_TOKEN does not carry the optional read:user scope, so do not claim private/internal contributions are included.
+- **Documentation drift:** early agent workplans became stale after implementation. AGENTS.md now requires a fresh Git and Actions inspection, and ROADMAP.md is the sole current backlog.
+
 ## Current operational boundaries
 
 - The owner workflow modifies only GitHub-Constellation. It does not install or update imagery in the owner's separate GitHub profile repository.

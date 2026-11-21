@@ -98,7 +98,7 @@ Workflows:
 - generate-gifs.yml: rebuilds six synthetic stress GIFs on relevant master changes or manual dispatch.
 - owner-calendar.yml: daily at 02:23 UTC, manual dispatch and selected source pushes; refreshes the owner's assets and README summary in this repository only.
 
-Generated workflow commits use GITHUB_TOKEN and may not trigger other workflows. Check Actions history and logs rather than assuming downstream jobs ran.
+Generated workflow commits use GITHUB_TOKEN and may not trigger other workflows. Check Actions history and logs rather than assuming downstream jobs ran. The quality-gate workflow prefers preinstalled runner Chrome when available, passes its path through CONSTELLATION_CHROMIUM, and falls back to Playwright's Chromium install. Both tests/browser_smoke.py and export_gif.py honour that executable override.
 
 ## Change discipline
 
