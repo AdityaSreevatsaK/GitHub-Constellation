@@ -141,7 +141,7 @@ Start with [AGENTS.md](AGENTS.md) when using AI coding agents, then [architectur
 
 **Reusable profile Action available on master, not installed into anyone's profile.** The read-only official GraphQL collector is separate from the older synthetic event contract. The [reusable Action](action.yml), [profile installation instructions](docs/PROFILE_INSTALLATION.md) and [owner-only automated refresh](.github/workflows/owner-calendar.yml) are included in master. Daily owner-preview refresh is enabled on this repository's default branch. No other repository or live profile is modified.
 
-Next milestones: GitHub-hosted animation playback review, wider consumer acceptance tests, customisation and public release documentation. See [ROADMAP](docs/ROADMAP.md).
+Next milestones: GitHub-hosted animation playback review, external consumer acceptance, collector resilience and release readiness. See [ROADMAP](docs/ROADMAP.md).
 
 The migration excludes unrelated Studio concepts and obsolete radial/clustered/calendar prototype art. The original [draft PR #1](https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/pull/1) is retained as migration provenance.
 

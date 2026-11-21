@@ -52,7 +52,7 @@ No private repository names are queried or stored. The public preview does revea
 - Never hardcode a token, print request headers, save credentials in snapshots or expose raw GraphQL error bodies.
 - Do not commit local-output/ or private-data/ contents.
 - The Action needs no repository write permission for collection or rendering. A calling workflow needs contents: write only if it chooses to commit generated assets.
-- The owner workflow's contents: write permission is limited to publishing the owner preview assets and README summary in this repository.
+- The owner workflow has repository-level contents: write permission because it commits the owner preview assets and README summary. Its script stages only those paths; GitHub does not enforce path-level limits on that token permission.
 
 ## 5. Visual semantics
 
