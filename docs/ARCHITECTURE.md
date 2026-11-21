@@ -1,104 +1,105 @@
 # Architecture and engineering invariants
 
-## Purpose
+## System overview
 
-GitHub Constellation is a GitHub-profile-ready renderer for real calendar-shaped activity, with Comet Streaks, Celestial Cartographer and Starforge animation modes. It is a verified official GitHub calendar renderer and reusable composite Action, with separate synthetic event-sample demonstrations. Consumer profile installation is opt-in. All three modes share one date model; only presentation differs.
+GitHub Constellation has two independent data paths that share one calendar model and three renderers:
+
+~~~text
+Synthetic v1 fixtures
+    -> engine.mjs
+    -> preview.html interactive gallery
+    -> deterministic SVG exports
+    -> optional Playwright + Pillow GIF exports
+
+Authenticated GitHub GraphQL
+    -> official_calendar.mjs
+    -> validated v2 official-calendar snapshot
+    -> engine.mjs
+    -> SVG exports
+    -> optional 16-second GIF exports
+    -> reusable composite Action or owner-calendar workflow
+         -> public preview assets + README summary
+~~~
+
+The offline renderer needs no token or network. The official collector requires an authenticated GraphQL request. The interactive preview page currently loads only the two synthetic v1 fixtures. It is not a live-data dashboard.
 
 ## Source layout
 
-| Location | Responsibility | Key guarantees |
-|---|---|---|
-| engine.mjs | Parse contract-v1 snapshots; aggregate events per UTC date; calculate 371 cells, streaks and SVG geometry | Deterministic output; reject malformed data; preserve date positions |
-| export.mjs | Source-to-SVG CLI | No external npm packages; strict source selection; 12 assets per fixture |
-| export_gif.py | Render SVG motion via Chromium; encode palettes and save GIFs via Pillow | 16,000 ms duration, visible frame changes, consistent dimensions |
-| preview.html | Browser lab and accessible controls | No server API; event inspector; keyboard access; narrow viewport scrolling |
-| fixtures/demo-activity.json | Ten-event synthetic contract v1 | Isolated active dates, exactly zero real consecutive-date streaks |
-| fixtures/streak-demo.json | Larger explicitly synthetic showcase | 65 active dates, 69 events, seven real date-consecutive runs |
-| assets/ | Source-controlled demo SVG exports | Animated and still, both themes, three designs |
-| assets/stress/ | Source-controlled stress-test SVGs and generated GIF previews | Every visual backed by synthetic stress fixture, not owner data |
-| tests/ | Unit and browser/encoder regressions | Event semantics, motion, timing and responsive interaction |
-| docs/ | Architecture, provenance, standards and agent instructions | This standalone repo is authoritative |
-| .github/workflows/ | Validation and optional automated GIF asset generation | No paid API, least privileges |
+| Path | Responsibility |
+|---|---|
+| engine.mjs | Parses both input contracts, maps dates to 371 cells, derives active days/streaks, renders the three SVG designs |
+| official_calendar.mjs | GraphQL query, two-window collection, response validation and v2 snapshot normalisation |
+| collect-contributions.mjs | Secure-environment CLI for official data; writes a local snapshot |
+| export.mjs | Deterministic offline SVG exporter |
+| export_gif.py | Captures SVG animation frames in Chromium and encodes a native GIF with Pillow |
+| preview.html | Interactive synthetic-fixture gallery, comparison, pause and keyboard inspector |
+| validate-action.mjs | Validates Action identity, design, theme and workspace-relative output path |
+| action.yml | Composite Action that collects official data and exports SVG plus optional GIF |
+| update_readme_stats.mjs | Updates one marked README summary using a validated official snapshot |
+| fixtures/ | Synthetic contract-v1 inputs |
+| assets/ | Synthetic still/animated SVGs and stress GIFs |
+| assets/real/AdityaSreevatsaK/ | Public owner preview assets from API-visible official data |
+| tests/ | Node, Python and Chromium smoke tests |
+| .github/workflows/ | CI, synthetic GIF generation and owner-only refresh |
 
-Legacy experiments (radial/clustered star maps, older calendar-sky Python) are intentionally excluded: they were rejected as hard to understand and are retained only in Studio history.
+There is no package.json, lockfile or npm dependency tree. Core JavaScript uses Node built-ins. The optional Python pipeline uses Pillow and Playwright with Chromium.
 
-## Current rendering pipeline
+## Data contracts and shared model
 
-~~~text
-Synthetic JSON fixture (contract v1)
-    |
-    +--> engine.parse: validate, deduplicate and aggregate by calendar day
-    |        |
-    |        +--> Sunday-first 53 x 7 cells
-    |        +--> active days, mixed-unit intensity, factual streak groups
-    |
-    +--> engine.render: choose design, theme, static/animated
-             |
-             +--> export.mjs: deterministic self-contained SVGs
-             +--> preview.html: interactive browser gallery and inspector
-             +--> export_gif.py: Chromium frame capture -> Pillow palette/frames
-                                   -> 16-second native GIF loop
-~~~
+The engine dispatches by schema version:
 
-The diagram is conceptually synchronous. No network or token is required for the current renderer.
+- Contract v1: event-sample data, aggregated into mixed recorded activity units. The synthetic fixtures use this path.
+- Contract v2: official GitHub contribution-calendar data, with daily contribution counts and GitHub-defined contribution levels.
 
-## Strong cross-design invariants
+Both are converted to a shared 53-column by seven-row Sunday-first model (371 cells). A source date maps to the same cell in every design and theme. One active date creates one calendar star regardless of event count. Streaks are based on adjacent dates, not visual proximity.
 
-- **Calendar:** exactly 371 fixed slots arranged as 53 weeks by seven Sunday-first days. No positional interpolation, randomisation or reshuffling of active days.
-- **Date:** event timestamp parsing is UTC; the same source date must map to the same cell in every design and theme. Real GitHub GraphQL calendar dates require a different, explicitly verified date interpretation.
-- **Identity:** source event IDs deduplicated; one active day remains one day-star regardless of number or kind of source events.
-- **Intensity:** contract-v1 sums documented mixed source activity units into four explicit levels. These are not GraphQL contribution totals.
-- **Streaks:** calculate only from distinct observed consecutive calendar dates, not proximity of SVG coordinates. Week wrapping cannot create spurious diagonal connections.
-- **Motion:** animated modes must converge to the same final still; no motion may conceal or fabricate data.
-- **Determinism:** sorted records and fixed rendering options produce byte-identical SVG outputs. GIF generation verifies encoded playback timing.
-- **Security:** validate all inputs and escape injected text/links in exports. No execution from input data and no external assets in generated SVGs.
+Contract-v1 intensity uses mixed activity-unit bands: 1, 2-3, 4-6 and 7+. Official data uses the GitHub contribution-level quartiles and a separate official legend. Never mix the two legends or metrics.
+
+For v2, the collector treats the GraphQL date as canonical, checks weekday/date agreement and requires a complete contiguous range. The range starts on the Sunday 52 weeks before the week containing the as-of date and ends on that date. The resulting snapshot contains 365 to 371 dates, with the remaining grid cells marked as future.
 
 ## Rendering designs
 
-**Comet:** chronological motion on each consecutive-day run; singleton stars do not have moving trails. At a Saturday/Sunday transition the comet must wrap visually without implying a diagonal line of unobserved calendar cells.
+- **Comet Streaks:** only consecutive active dates are joined by motion. Isolated days remain stars. Weekend adjacency is handled without a false diagonal.
+- **Celestial Cartographer:** an observatory and scanning beam reveal recorded days chronologically; the calendar remains visible.
+- **Starforge:** bounded particles travel from the forge to true active-day cells. Particle count is capped for dense calendars, but every active date remains visible.
 
-**Cartographer:** an original miniature observatory sits outside the calendar lattice and scans weeks left to right, revealing only source-backed active dates.
+SVG output is self-contained and uses a 1200 by 390 viewBox. Native GIF output defaults to 720 by 234, two frames per second and a 16-second loop. The GIF encoder coalesces identical frames while retaining their durations, then verifies encoded duration and visible motion.
 
-**Starforge:** a sparkle leaves the forge and reaches one active calendar cell; the corresponding permanent star brightens on arrival. High-density snapshots cap the *number of animated particles*, not the number of displayed source days.
+## Official collection and automation
 
-For all designs, a still export is a first-class output and must remain useful at reduced motion, on mobile and in a GitHub README.
+official_calendar.mjs sends two sequential GraphQL requests to api.github.com/graphql. The first covers 14 days and the second covers the remainder of the 53-week calendar window, keeping each request below a one-year range. Each request has a 20-second timeout. The collector validates returned login, ISO dates, weekday, non-negative integer counts, contribution-level consistency, duplicates and complete coverage. Missing or malformed days fail closed. There is no retry or rate-limit backoff implementation yet.
 
-## Future real-data architecture
+collect-contributions.mjs reads GH_TOKEN or GITHUB_TOKEN from the environment. It writes the v2 snapshot to a local path, normally local-output/, which is ignored by Git. The token and raw snapshot are not committed.
 
-The official GitHub contribution calendar is an independent source and **not a thin adapter that turns contribution counts into fake repo events**. Proposed pipeline:
+action.yml validates the username, design, theme and relative output path before collection. It writes only within the checked-out workspace, exports static and animated SVGs, and optionally installs Python 3.11, Pillow, Playwright and Chromium to create GIFs. It does not commit or push output. The calling workflow owns publication and requires contents: write only if it wants to commit assets.
 
-~~~text
-Authenticated read-only GitHub GraphQL query
-    -> validate actor, window, completeness, day coverage, visibility
-    -> official-calendar snapshot (separate schema/version)
-    -> common typed calendar model (metric_kind = official_contributions)
-    -> same three renderers, correct units and legends
-    -> local SVG / GIF, then optional profile GitHub Action
-~~~
+The owner-calendar workflow is guarded to this repository. It runs on a daily UTC schedule, manual dispatch and selected master-branch source changes. It collects the owner's API-visible calendar, exercises the local composite Action, validates twelve SVGs and six 16-second GIFs, refreshes the marked README summary, and commits only the public preview assets and README. It does not modify the separate profile repository or commit the raw snapshot.
 
-The calendar rendering interface can be shared while provenance and metrics remain separate. Keep the read/validate/transform stages independently testable with offline API-response fixtures. A live-data failure should fail closed, not fall back to synthetic images labelled personalised.
+update_readme_stats.mjs accepts only a valid v2 snapshot and exactly one ordered marker pair. It derives counts from the same daily data used for rendering. It never writes the raw calendar payload to README.
 
-## Performance and output constraints
+## Workflows
 
-- 371 calendar cells must always be rendered.
-- Avoid unbounded animation particles for busy users.
-- Use lazy/optional Chromium and Pillow only for GIF export.
-- Generated images must be self-contained and modest in size. Existing synthetic GIF benchmark: 720 by 234 px and 16 seconds, with each source GIF under approximately 1.8 MiB.
-- Avoid paid APIs, external fonts, tracker calls or browser-side credentials.
-- Work on Windows PowerShell without WSL; CI runs on standard GitHub-hosted Linux.
+| Workflow | Trigger | Purpose |
+|---|---|---|
+| tests.yml | master/feature branch pushes, pull requests, manual | 42 Node checks, five Python GIF tests, synthetic gallery browser smoke and SVG reproducibility |
+| generate-gifs.yml | relevant master changes or manual | Regenerate six synthetic stress GIFs |
+| owner-calendar.yml | daily schedule, manual, selected master source changes | Refresh owner official assets and README totals |
 
-## Known risks
+The exact latest run status must be checked in GitHub Actions before reporting it. Workflow YAML is not evidence of successful execution.
 
-1. GitHub image proxy may suppress embedded SVG animations; native GIFs are intended for README motion and static SVGs are fallbacks.
-2. GitHub's official calendar semantics may differ from event-derived UTC dates: do not assume equivalence without testing.
-3. Privacy and access scope differ when querying another user or authenticated private contributions.
-4. Live official data collection and scheduled project-local updates are implemented. The public consumer Action has been smoke-tested in this repository but is not installed in the owner's profile.
-5. The original Studio's draft PR, commits and legacy experiments remain historical provenance, not the active repository.
+## Security boundaries
 
-See DATA_SOURCES.md for strict collection requirements and ROADMAP.md for the implementation sequence.
+- Tokens exist only in Action environment variables or local shell environment.
+- No raw official snapshot or private repository names are published.
+- The owner workflow has contents: write because it commits public assets to this repository. The composite Action itself does not push.
+- Action output paths are relative, checked against workspace traversal and symlinks.
+- SVG/HTML labels and links are escaped or validated by the renderer.
+- API-visible counts may not include all private activity. Do not overstate completeness.
 
-## Implemented official-calendar architecture (18 November 2026)
+## Known limitations
 
-The official GitHub contribution-calendar source is separate from the event-sample contract. official_calendar.mjs collects and validates complete dated contributions from two GraphQL windows, rejecting missing days, altered identity, incorrect weekdays, negative counts, unexpected levels and API failures. collect-contributions.mjs accepts a token through an environment variable and writes a validated 2-official-calendar snapshot to an ignored local path. engine.mjs reads this typed data directly, retaining the 371-cell geometry while using actual contribution counts and API-defined intensity tiers, with source-specific tooltips and legends.
-
-exporters produce source-faithful SVGs and verified 16-second GIFs. action.yml provides an installable composite GitHub Action with validated username, design, theme and safe output path. The owner-calendar workflow operates only on this repository; its daily schedule is enabled on the default branch. The owner workflow successfully collected and rendered actual GitHub contributions for AdityaSreevatsaK on 18 November 2026, and also exercised the composite Action itself.
+1. GitHub image proxy playback of the embedded GIFs has not been independently inspected in the live README. Native GIF files and durations are validated; static SVGs remain available.
+2. The owner Action and workflow are tested in this repository. A clean external consumer repository and multiple account/token configurations still need end-to-end acceptance.
+3. The collector times out and fails closed but does not retry or back off on rate limits or transient network failures.
+4. The browser gallery is synthetic-only. Real account previews are generated through the CLI/Action pipeline.
+5. No licence or versioned Action release has been selected. A public repository is not automatically an open-source licence.

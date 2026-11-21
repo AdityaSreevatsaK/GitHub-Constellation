@@ -1,120 +1,172 @@
-# AGENTS.md: GitHub Constellation
+# AI agent instructions: GitHub Constellation
 
-This is the **authoritative root instruction document for AI software agents** working in https://github.com/AdityaSreevatsaK/GitHub-Constellation. Read all applicable files in the required order; do not reuse branch restrictions or paths from the former GitHub-Activity-Studio monorepo.
+This file is the mandatory entry point for AI coding agents. It describes durable project rules, not a substitute for inspecting the live repository. The code, tests, workflows and current Git state take precedence over old summaries or stale documentation.
 
-## 1. Mission and creative direction
+## 1. Mandatory repository-state inspection
 
-Build an original, exceptionally polished, **clearly recognisable GitHub contribution calendar** that can eventually be embedded in any GitHub profile, analogous in usability and memorability to GitHub Snake but NOT its mechanics or visual art.
+Before any substantial task, establish what is true **now**. Do not start from a previous chat summary, an old roadmap milestone or an assumed branch state.
 
-The familiar 53-column, seven-row GitHub contribution lattice must stay the primary subject. Every highlighted square/star corresponds to a real dated input record. Users must understand the story at normal profile-README width with only a brief one-line legend. A beautiful but ambiguous constellation chart, generic scattered starfield, random lines between repositories or decorative dashboard is a design failure.
+1. Confirm repository root, remotes, default branch and current branch:
+   ~~~powershell
+   git rev-parse --show-toplevel
+   git remote -v
+   git branch --show-current
+   git branch -vv
+   ~~~
+2. Inspect all local work before touching files:
+   ~~~powershell
+   git status --short --branch
+   git diff --stat
+   git diff
+   git diff --cached --stat
+   git diff --cached
+   git ls-files --others --exclude-standard
+   ~~~
+   Treat pre-existing modifications and untracked files as user-owned. Preserve them. Never use reset, clean, checkout or force operations to make the tree look tidy.
+3. Refresh and compare remote history when network access is available:
+   ~~~powershell
+   git fetch origin --prune
+   git log -8 --oneline --decorate
+   git log -8 --stat
+   git diff --stat origin/master...HEAD
+   git show --stat --oneline HEAD
+   ~~~
+   If fetch is unavailable, state that limitation and use the latest accessible GitHub branch, commit and Actions data. Do not claim to have inspected a local working tree when you have not.
+4. Inspect the current tree, source files and matching tests for the requested change. Check recent commits and generated assets, not just filenames.
+5. Inspect current GitHub state where relevant: open and recently merged PRs, issues, branch heads, releases/tags, workflow definitions and the latest successful and failed Actions runs. A workflow existing in the tree does not prove it is enabled or passing.
+6. Read the relevant project documents below, then reconcile every material statement with code, tests, workflow configuration and recent Git history.
+7. Before implementation, classify the affected capability as **implemented**, **partially implemented**, **planned**, or **deprecated**. Cite the exact source/test/workflow evidence in your reasoning and report. Update stale documentation rather than extending it.
 
-Three designs already exist and must remain genuinely distinct:
+When evidence conflicts, use this order: current source and executable configuration; tests and recent successful workflow evidence; current Git history; project documentation; old discussions and AI summaries. Historical context explains decisions but cannot prove current behaviour.
 
-1. **Comet Streaks:** light a star for each active day, then animate comets only over uninterrupted consecutive active dates; singletons remain stars and missing dates split a trail. Handle Saturday-to-Sunday wraps without suggesting false adjacent geometry.
-2. **Celestial Cartographer:** a miniature original observatory outside the grid guides a left-to-right week sweep that reveals the recorded day-stars. The calendar remains visible, not obscured.
-3. **Starforge:** a small stellar forge dispatches bounded particles to their correct recorded calendar positions, which brighten as each spark arrives. Multiple source events in one day form one day-star, never fake extra days.
+## 2. Required reading order
 
-Preserve dark/night and light/paper treatments, a strong static final frame, 16-second motion, reduced-motion alternatives, accessible descriptions, and visually meaningful intensity. No unrelated Code Factory, Metro, Developer World, Agent Swarm or portfolio work belongs here.
+Read the root instructions, then the documents relevant to the task:
 
-## 2. Source of truth: read before editing
+1. docs/ARCHITECTURE.md
+2. docs/DATA_CONTRACT.md and docs/DATA_SOURCES.md
+3. docs/DEVELOPMENT.md and docs/TESTING.md
+4. docs/ROADMAP.md
+5. README.md and docs/PROFILE_INSTALLATION.md when touching user-facing usage or the Action
+6. docs/MIGRATION.md for historical decisions only
+7. Exact source files, workflow files and tests being changed
 
-Read in this order:
+Do not use the superseded docs/AGENT_WORKPLAN.md as a task backlog. The current backlog is docs/ROADMAP.md.
 
-1. This AGENTS.md.
-2. docs/ARCHITECTURE.md for components and invariants.
-3. docs/DATA_SOURCES.md and docs/DATA_CONTRACT.md for provenance, calendar semantics and security.
-4. docs/DEVELOPMENT.md and docs/TESTING.md for commands and acceptance checks.
-5. docs/ROADMAP.md for priorities and definitions of done.
-6. README.md and, for historical context only, docs/MIGRATION.md.
-7. The exact source files you will change, and their tests.
+## 3. Product vision and non-negotiable design rules
 
-Do not treat old Studio prompt docs as current requirements. The source reference is Studio branch concept/constellation at commit be7f524597285c2078565068ab23a683316404a2, and Studio PR #1 was a draft. This repository is now the independent home.
+Create an original, polished, recognisable GitHub contribution calendar that can be embedded in a GitHub profile. The 53-column by seven-row calendar is the primary subject, not a decorative starfield or unrelated dashboard. Every highlighted day must map to a dated source record. A viewer should recognise the calendar quickly at normal README width.
 
-## 3. Repository and change-control rules
+Three approved visual designs must remain genuinely distinct:
 
-- Default branch: **master**. Use descriptive feature branches for substantial work and draft pull requests for owner review. Do not force-push master, publish releases, change repository visibility/settings, select a licence or modify the owner profile without explicit approval.
-- A request to implement means **make working source changes, tests, exports and docs**, not simply deliver an idea or handoff.
-- Do not edit GitHub-Activity-Studio or sibling concept repositories as part of normal Constellation development.
-- Never delete the source repository or old historical material without explicit approval.
-- Keep all required assets self-contained; no mandatory external fonts, CDNs, analytics, paid APIs or untrusted remote script execution.
-- Verify branch head and file state before writing. Do not overwrite other agents' concurrent changes. Prefer idempotent commands and atomic file updates.
-- Keep commits focused. Describe observed test results accurately. Distinguish tests you ran, tests only documented, and behaviour not independently verified.
+1. **Comet Streaks:** one star per active day; a comet travels only across truly consecutive active dates. Singletons remain stars. Missing dates break trails. Saturday/Sunday adjacency must not become a misleading diagonal.
+2. **Celestial Cartographer:** a small observatory outside the calendar sweeps left to right, revealing only source-backed days. It must not obscure the calendar.
+3. **Starforge:** bounded sparks travel from a small forge to their actual active-day cells. Several events on one date still create one calendar star.
 
-## 4. Strict data integrity and provenance
+Keep night and paper themes, 16-second motion, a useful final frame, accessible labels, keyboard focus, responsive mobile behaviour and a static SVG alternative. Never invent, move or multiply contribution days for visual effect.
 
-**Absolute rule: no fake personal contributions.** The currently committed ten-event and stress fixtures are synthetic. They must always be plainly marked as synthetic; do not call their aggregated activity units GitHub contribution counts.
+## 4. Data integrity and privacy
 
-Contract v1 is an **event-sample** input: schema_version 1; source demo/github; generated_at UTC; user; repositories; activity events. Strictly validate types, permitted HTTPS github.com URLs, distinct IDs, repository names, recognised kinds and positive integer count values. Deduplicate IDs; keep PR-opened and PR-merged events distinct. Count and brightness mean recorded mixed activity units only.
+There are two separate input contracts. Never mix their semantics:
 
-Blank cells in an event sample mean **no recorded event in this input**. They are NOT proof of zero contributions. When an annual official contribution collection is fetched, keep a **separately typed model/contract** describing GitHub GraphQL contributionsCollection.contributionCalendar. Do not silently translate its daily contributionCount into fake commit events, and do not conflate it with event-source contract v1.
+- **Contract v1, event samples:** recorded events with mixed activity units. The checked-in fixtures are synthetic. They must be labelled as such. A blank date means no event in that sample, not a verified zero GitHub contribution.
+- **Contract v2, official calendar:** GitHub GraphQL contribution-calendar days and API-visible contribution counts/intensity. It is not a list of commits or repositories. Preserve the API date, count, level and visibility caveat.
 
-For a real account, respect GitHub API authentication, scope, selected user identity, time window, server-side calendar dates, read-only access and visibility constraints. Report hidden/private contributions honestly, without naming private repositories or disclosing credentials. Reject incomplete/stale/failed collection rather than silently generating misleading personalised images. Never store tokens in committed fixtures, SVGs, logs, actions or the browser gallery.
+No fake personal contributions. Do not convert a daily count into fictitious commits, pull requests or repositories. Do not describe mixed event units as official contribution totals. A successful API query proves only what that token and GitHub's visibility settings expose. Never claim private contributions are included unless the actual token and settings justify it.
 
-Calendar mapping: 53 columns by seven Sunday-first rows, UTC and API date precision, leap years, week/year boundaries, future-day handling, deterministic dates and consistent data-to-visual correspondence. Derived animation must never invent or relocate days.
+Never commit tokens, raw authenticated responses, private repository names or unnecessary personal history. Do not expose credentials in command output, logs, SVGs, browser code or README metadata. A failed or incomplete official collection must fail closed and must not replace known-good public assets with synthetic or partial data.
 
-## 5. Current implementation and technical constraints
+## 5. Current implementation map
 
-The production candidate is a small Node ESM + Python stack:
+| Path | Responsibility and current scope |
+|---|---|
+| engine.mjs | Shared 371-cell model, strict parsers for v1 and v2, streak logic and all three SVG renderers |
+| official_calendar.mjs | Read-only GitHub GraphQL collection, two date windows, identity/date/weekday/count/level/completeness validation |
+| collect-contributions.mjs | CLI using GH_TOKEN or GITHUB_TOKEN; writes a local v2 snapshot |
+| export.mjs | Offline SVG CLI for v1 or v2; design and theme selection |
+| export_gif.py | Optional Playwright/Chromium frame capture and Pillow GIF encoding; exact 16-second loop validation |
+| preview.html | Interactive local gallery for the two synthetic v1 fixtures only; it does not fetch live GitHub data |
+| validate-action.mjs and action.yml | Composite Action input validation, official collection, SVG output and optional GIF output |
+| update_readme_stats.mjs | Replaces the marked README summary from a validated v2 snapshot |
+| fixtures/ | Synthetic v1 demo and stress fixtures |
+| assets/ | Synthetic SVG exports and stress GIFs |
+| assets/real/AdityaSreevatsaK/ | Owner's API-visible official calendar SVG/GIF previews, refreshed by Actions |
+| tests/ | Node unit tests, Python GIF tests and synthetic-gallery browser smoke |
+| .github/workflows/tests.yml | CI regression, browser and SVG reproducibility checks |
+| .github/workflows/generate-gifs.yml | Regenerates the six synthetic stress GIFs |
+| .github/workflows/owner-calendar.yml | Owner-only scheduled collection, Action smoke, official assets and README summary refresh |
+| docs/ | Architecture, data contracts, development, testing, roadmap and historical provenance |
 
-- engine.mjs: calendar parsing/aggregation and SVG geometry, one shared model for all designs.
-- export.mjs: deterministic offline still/animated SVG exporter.
-- export_gif.py: optional Chromium and Pillow GIF encoder with full-loop timing tests.
-- preview.html: interactive control surface, keyboard/focus inspection and mobile horizontal scrolling.
-- fixtures/demo-activity.json and fixtures/streak-demo.json: clearly synthetic reference inputs.
-- assets/ and assets/stress/: generated SVGs and six GIF targets; SVGs remain the reliable static fallback.
-- tests/: Node tests for semantics/motion, Python GIF timing tests and optional Chromium browser smoke.
+There is no package.json or npm dependency installation. Core SVG generation uses Node built-ins. The browser gallery is synthetic-only. Real calendar rendering is through the collector, exporter and Action.
 
-Supported primary developer workstation: **Windows PowerShell, Python 3.11+ and Node 20+**, without WSL or paid APIs. Keep offline rendering and core tests fast and dependency-free. GIF/Chromium dependencies are optional locally and may be installed in CI.
+## 6. Verified capability boundaries
 
-SVG motion may not run inside GitHub's image proxy. Native GIF is the intended README animation format. Do not claim actual GitHub-hosted playback is verified until it has been observed on the rendered GitHub page. Preserve static alternatives in all cases.
+Use these as the current baseline, then re-check them before relying on them:
 
-## 6. Non-negotiable quality and visual acceptance
+| Capability | State | Boundary |
+|---|---|---|
+| Three designs and two themes | Implemented | Shared date positions and distinct mechanics |
+| Synthetic event renderer and browser gallery | Implemented | Preview gallery loads synthetic fixtures only |
+| Official GitHub GraphQL calendar collector | Implemented | Two requests, 20-second timeout per request, fails closed; no automatic retry/backoff |
+| Official calendar SVG/GIF exports | Implemented | Source-backed owner previews are committed; GitHub image-proxy playback is not visually confirmed |
+| Composite GitHub Action | Implemented | Smoke-tested in this repository; no stable release tag |
+| Owner scheduled refresh | Implemented | Updates only this repository's public assets and marked README summary |
+| Installation in the owner's profile repository | Not implemented | Must remain a separate, explicit decision |
+| Licence and versioned public release | Not selected | Do not assume reuse rights or publish a release |
+| Private contribution completeness | Not guaranteed | Depends on GitHub visibility and token authorisation |
 
-- First-frame comprehension: the viewer recognises GitHub's calendar in five seconds.
-- Star positions correspond exactly to calendar dates and are stable between designs.
-- One recorded active day yields one star, no fake streak; weekends wrap factually; missing days break streaks.
-- Multiple events for a date aggregate without multiplying calendar stars.
-- Honest intensity scale in both themes: 1, 2-3, 4-6, 7+ mixed event units for contract v1.
-- 53 by seven visible cells; proper leap-year, year-boundary and UTC logic.
-- No invented data or decorative stars visually confused with dated contributions.
-- No HTML or SVG injection through source names, URLs, labels or JSON.
-- Generated files reproducible given identical input, source and options; size, duration and visible motion verified.
-- Reduced-motion support, static fallback, alt/title/desc, keyboard inspector, contrast and responsive mobile scrolling.
-- No browser network calls for rendering the offline demo.
-- Tests must cover empty data, malformed input, high-density data, long streaks, duplicates, zero activity, time boundaries and cross-theme equivalence.
+The latest account totals are intentionally maintained in the README by automation. Do not copy a changing total into these instructions.
 
-## 7. Development, tests and CI
+## 7. Development and quality gates
 
-Run before proposing a code change:
+Supported local baseline: Node.js 20+ and Python 3.11+. CI and the composite Action use Node.js 22 and Python 3.11. No npm install is required.
+
+Run the complete offline regression suite:
 
 ~~~powershell
-node --test tests/test_engine.mjs tests/test_motion.mjs
+node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs tests/test_readme.mjs
 py -3 -m unittest tests/test_gif.py -v
+py -3 tests/browser_smoke.py
+~~~
+
+Regenerate deterministic synthetic SVGs:
+
+~~~powershell
 node export.mjs
 node export.mjs --input fixtures/streak-demo.json --out assets/stress --label "SYNTHETIC STREAK STRESS TEST"
 ~~~
 
-When Playwright/Chromium is available, also run:
+Optional GIF export requires Pillow, Playwright and installed Chromium:
 
 ~~~powershell
-py -3 tests/browser_smoke.py
+py -3 -m pip install pillow playwright
+py -3 -m playwright install chromium
 py -3 export_gif.py
 ~~~
 
-The repo contains test CI and a separate GIF rendering workflow. Workflow-generated GIFs must each retain 16-second playback with visible motion. If GIF artefacts are missing or the workflow cannot write because of permissions, report that explicitly and keep the SVG fallback; do not fake a successful migration.
+For a local official calendar, supply a token only through the environment:
 
-## 8. Prioritised next development initiative
+~~~powershell
+$env:GH_TOKEN = "YOUR_TOKEN"
+node collect-contributions.mjs --username YOUR_GITHUB_USERNAME --out local-output/official.json
+node export.mjs --input local-output/official.json --out local-output/images --design all --theme both
+py -3 export_gif.py --source local-output/images --out local-output/images
+Remove-Item Env:GH_TOKEN
+~~~
 
-**P0: migration verification.** Confirm file count, source imports, real command paths, all 24 SVG variants and six GIF binaries (or a clearly reported Actions blocker), README rendering, 28 Node tests, five Python tests and browser smoke. Keep original data provenance.
+Keep local-output ignored. Never commit the snapshot or token. See docs/DEVELOPMENT.md and docs/TESTING.md for complete commands and workflow details.
 
-**P1: official GitHub account support is implemented on master.** Keep the separate official GraphQL source, full-date validation, API-visible labels and tests. Real preview assets for AdityaSreevatsaK are already generated (18 November 2026). Review freshness, API scope and privacy before enabling wider use.
+## 8. Change control
 
-**P2: reusable Action and example daily workflow are implemented on master.** Validate the consumer workflow in a real destination before describing it as a stable release. The owner-only scheduled preview workflow is enabled on master and updates only this repository. Do not automatically modify the owner's actual profile without approval.
+- Use a descriptive feature branch for substantial changes. The CI push filter includes feature/**; pull requests also run CI.
+- Keep changes focused and preserve the user's existing working tree.
+- Update tests and generated outputs whenever source changes require them.
+- Update the relevant docs in the same change. Do not duplicate the same roadmap in several files.
+- Do not merge PRs, force-push, publish tags/releases, change repository settings or modify the owner's separate GitHub profile unless explicitly requested.
+- Do not claim a workflow, action or visual behaviour is verified from its YAML alone. Check the actual run and relevant logs.
+- Never use a synthetic fixture as a fallback for a failed live collection.
+- Do not add external trackers, remote fonts, paid APIs or runtime CDN dependencies without explicit approval.
 
-**P3: release polish.** Inspect GitHub-rendered dark/light assets, animation motion, narrow widths, accessible contrast, documentation, contribution templates, licensing choice and release verification.
+## 9. Completion standard
 
-Consult docs/ROADMAP.md for detailed acceptance criteria and sequencing; update it when steps are objectively completed.
-
-## 9. Done means working and evidenced
-
-For each development PR provide: summary, exact paths changed, screenshots or committed exported previews, commands and test outcomes, explicit provenance and scope, security considerations, unresolved behaviour and a brief next step. Never merge a draft PR or assert GitHub rendering worked based solely on a local browser or successful file export. Make code changes first, not a handoff-only document.
+A substantial change is complete only when the implementation, tests, generated assets and documentation agree. Report the branch and commit/PR, exact files changed, commands and actual outcomes, data provenance, any skipped checks, and remaining limitations. Separate what was executed locally from what passed in GitHub Actions. Do not claim GitHub-hosted image playback was verified without inspecting the actual rendered README.

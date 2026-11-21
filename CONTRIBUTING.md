@@ -1,17 +1,32 @@
 # Contributing to GitHub Constellation
 
-This project aims for high-quality, comprehensible GitHub contribution-calendar animations. Development must respect real-data provenance and preserve three original design languages.
+The project creates source-faithful, recognisable GitHub contribution-calendar animations. Contributions must preserve the 53x7 date grid, the three distinct designs and the separation between synthetic event samples and official contribution counts.
 
-## Before a contribution
+## Before changing code
 
-Read [AGENTS.md](AGENTS.md), [ARCHITECTURE](docs/ARCHITECTURE.md), [DATA_SOURCES](docs/DATA_SOURCES.md), [DEVELOPMENT](docs/DEVELOPMENT.md) and [TESTING](docs/TESTING.md). Open or reference an issue for significant work and use a descriptive feature branch. Keep changes focused, with data validation and tests. Do not introduce unrelated Studio concepts.
+1. Read [AGENTS.md](AGENTS.md) and the relevant architecture, data, development, testing and roadmap documents.
+2. Inspect Git status, current branch, recent commits and latest Actions. Preserve existing local changes.
+3. Establish whether the requested capability is implemented, partial, planned or deprecated before proposing a duplicate implementation.
+4. Use a focused feature branch and reference an issue for substantial work.
 
-Use Node.js 20+ and Python 3.11+. Core export is offline and has no npm dependencies. Python Pillow/Playwright and Chromium are optional for GIF and browser checks.
+## Local requirements and checks
+
+Use Node.js 20+ and Python 3.11+. Core SVG rendering has no npm dependencies. The CI baseline uses Node 22 and Python 3.11.
+
+~~~powershell
+node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs tests/test_readme.mjs
+py -3 -m unittest tests/test_gif.py -v
+py -3 tests/browser_smoke.py
+~~~
+
+See [DEVELOPMENT](docs/DEVELOPMENT.md) for export, collector, GIF and preview commands.
 
 ## Pull request standard
 
-Explain the problem, changed modules, data-source semantics, screenshots of both themes, test commands and outcomes, security/privacy effects, and limitations. Keep the calendar recognisable, day positions correct and static fallbacks available. Do not present synthetic fixtures as personal GitHub history. Use the pull request template.
+Explain the user-visible change, exact source files, data contract affected, tests and actual results, regenerated assets, security/privacy effects and remaining limitations. Include screenshots or links for visual changes. State explicitly if GitHub-hosted playback has not been inspected.
+
+Keep synthetic fixtures labelled. Do not claim their values are personal GitHub contributions. Do not publish raw authenticated snapshots or tokens. Update the relevant documentation in the same PR.
 
 ## Licensing
 
-A public repository is not the same as an open-source licensed repository. No licence has yet been approved by the owner. Until one is selected and published, contributors should not assume reuse rights. Owner approval is required before release and licence choice.
+This repository currently has no selected licence. Do not assume code reuse rights or add a licence without the owner's explicit decision.

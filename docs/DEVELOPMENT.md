@@ -1,109 +1,113 @@
-# Developer guide (Windows-first)
+# Developer guide
 
-## Prerequisites and environment
+## Prerequisites
 
-- Git and Node.js **20+**; Node 22 is suitable.
-- Python **3.11+**, preferably 3.11 or 3.12.
-- A modern browser. No Node package install and no paid API are needed for SVG generation.
-- For optional GIF/interactive browser automation only: Pillow, Playwright and Playwright Chromium.
-- Windows PowerShell is the reference shell. Linux CI uses the equivalent commands.
+- Local core development: Node.js 20+.
+- CI and composite Action: Node.js 22.
+- GIF and browser checks: Python 3.11+, Pillow, Playwright and Chromium.
+- Windows PowerShell is the documented local shell. CI runs on GitHub-hosted Ubuntu.
+- No package.json, npm install, build system or paid API is required for offline SVG work.
 
-From a clean clone:
+Clone and inspect:
 
 ~~~powershell
 git clone https://github.com/AdityaSreevatsaK/GitHub-Constellation.git
 Set-Location GitHub-Constellation
 node --version
 py -3 --version
+git status --short --branch
 ~~~
 
-Do not add API keys to source files or generated SVG assets. An official collector, when implemented, must use a secret environment variable or Actions secrets.
-
-## Fast development loop
+## Fast regression loop
 
 ~~~powershell
-# Pure Node regression tests, no dependencies
-node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs
-
-# Regenerate deterministic fixture outputs
-node export.mjs
-node export.mjs --input fixtures/streak-demo.json --out assets/stress --label "SYNTHETIC STREAK STRESS TEST"
-
-# Launch browser preview (stop with Ctrl+C)
-py -3 -m http.server 8000
-~~~
-
-Open http://localhost:8000/preview.html. Select design, theme or dataset, pause animation, compare all three, hover/focus a day-star. The browser must not overflow at 390 px wide, even if the calendar panel scrolls.
-
-## GIF toolchain (optional locally, automated in workflow)
-
-~~~powershell
-py -3 -m pip install pillow playwright
-py -3 -m playwright install chromium
-
-# All six stress-demo GIFs (three designs by two themes)
-py -3 export_gif.py
-
-# One specific output
-py -3 export_gif.py --design comet --theme night --fps 2 --width 720
-
-# Encoder and live-browser regression
+node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs tests/test_readme.mjs
 py -3 -m unittest tests/test_gif.py -v
 py -3 tests/browser_smoke.py
 ~~~
 
-GIF timing is tested against an actual decoded 16,000 ms loop. Repeated trailing frames must be coalesced with **duration retained**, not dropped early. Check visible frame changes and file size. Do not commit enormous intermediary screenshots.
+The browser smoke uses Chromium at 390px and 1280px widths. It exercises the synthetic gallery, all designs, themes, compare mode, pause, keyboard focus and horizontal overflow. It does not test a live GitHub README or live official-data preview.
 
-The complete SVG archive contains 24 files: six still + six animated for each of the two fixtures. SVGs are **1200 x 390**. Normal GIFs are **720 x 234** and loop for 16 seconds. Static SVGs always remain the primary fallback.
+## Synthetic SVG and GIF exports
 
-## Export CLI details
+~~~powershell
+node export.mjs
+node export.mjs --input fixtures/streak-demo.json --out assets/stress --label "SYNTHETIC STREAK STRESS TEST"
 
-- node export.mjs: ten-event fixture, outputs to assets/.
-- node export.mjs --input PATH: override fixture. Source should remain contract v1.
-- node export.mjs --out DIR: output directory.
-- node export.mjs --label TEXT: explicit provenance label.
-- node export.mjs --help: supported options.
+py -3 -m pip install pillow playwright
+py -3 -m playwright install chromium
+py -3 export_gif.py
+py -3 -m unittest tests/test_gif.py -v
+~~~
 
-Stable input and options must yield byte-identical SVG outputs; after code changes, regenerate and inspect affected assets. Never edit exported art manually while leaving source renderer unchanged.
+The first export writes twelve SVGs for the ten-event fixture to assets/. The second writes twelve SVGs for the stress fixture to assets/stress/. The GIF exporter reads the animated SVGs in assets/stress/ by default and creates six GIFs, three designs by two themes. GIFs default to 720 by 234 pixels, two frames per second and 16 seconds. The SVG viewBox is 1200 by 390.
 
-## Test-first changes
+The GIF CLI also accepts --source, --out, --fps (2 to 12), --width (480 to 1200), --design and --theme. It uses Chromium to capture frames and Pillow to encode and validate exact loop duration and visible motion.
 
-When changing calendar logic:
-1. Add failing tests to tests/test_engine.mjs for the exact source/date edge case.
-2. Update engine.mjs; preserve both themes and all designs.
-3. Regenerate SVGs and compare final positions.
-4. Run Node and Python unit tests, browser smoke and GIF export.
-5. Check normal GitHub profile width and mobile width.
+## Collect and render official GitHub data
 
-When changing animation:
-1. Add motion timing assertions in tests/test_motion.mjs.
-2. Keep final still unchanged unless there is an intentional documented visual redesign.
-3. Re-export both static and animated variants and GIFs.
-4. Check both themes, an isolated date, a long streak and a week wrap.
+The collector has a required username and output path. Its optional --as-of date defaults to the current UTC date. It does not accept arbitrary from/to windows.
 
-When adding the official collector:
-1. Create a **new versioned contract** and offline fixtures, separate from event contract v1.
-2. Make token handling, scope and completeness checks testable without network.
-3. Verify actual GitHub GraphQL contribution calendar and its date semantics.
-4. Integrate carefully with current calendar model; preserve event-sample demos.
-5. Only then generate an asset with real activity, labelled accurately.
+~~~powershell
+$env:GH_TOKEN = "YOUR_TOKEN"
+node collect-contributions.mjs --username YOUR_GITHUB_USERNAME --out local-output/official.json
+node export.mjs --input local-output/official.json --out local-output/images --design all --theme both
+py -3 export_gif.py --source local-output/images --out local-output/images
+Remove-Item Env:GH_TOKEN
+~~~
 
-## CI and source control
+The CLI accepts GH_TOKEN or GITHUB_TOKEN. The token is read only by the trusted collector and is never written into the snapshot. Keep local-output/ ignored. Do not commit the snapshot. For SVG-only output, omit the GIF command.
 
-Validation: .github/workflows/tests.yml. Regenerating committed preview GIFs: .github/workflows/generate-gifs.yml. The preview workflow attempts to commit only generated GIFs, using scoped contents:write permission; a repo policy may block that, in which case read its Action logs and report the constraint.
+The collector requests two windows, validates complete official date coverage and fails closed on API errors. It uses a 20-second timeout per request and currently has no retry/backoff. See DATA_CONTRACT.md and DATA_SOURCES.md before changing its schema or authentication.
 
-Use feature branches for substantial changes. The repository's master branch holds the initial standalone migration and is not automatically installed in the owner's GitHub profile. Avoid editing other repositories, modifying repository settings, tagging releases or merging PRs without approval.
+## Interactive browser gallery
+
+~~~powershell
+py -3 -m http.server 8000
+~~~
+
+Open http://localhost:8000/preview.html. The gallery loads fixtures/demo-activity.json and fixtures/streak-demo.json only. It supports all designs, both themes, compare, pause and keyboard-readable day inspection. It does not display the owner account's real data.
+
+## GitHub Action and workflows
+
+action.yml is a composite Action with these inputs:
+
+| Input | Default | Values |
+|---|---|---|
+| token | Required | Token passed through an environment variable |
+| username | Calling repository owner | Valid GitHub login |
+| design | comet | comet, cartographer, starforge, all |
+| theme | night | night, paper, both |
+| output-dir | constellation | Safe relative directory inside workspace |
+| gif | true | true or false |
+
+The Action collects official data, writes SVG outputs and optionally installs Python/Playwright/Chromium for GIFs. It does not commit or push files. The calling workflow is responsible for publication.
+
+Workflows:
+
+- tests.yml: Node 22, Python 3.11, all five Node test files, Python GIF tests, browser smoke and deterministic SVG archive checks.
+- generate-gifs.yml: rebuilds six synthetic stress GIFs on relevant master changes or manual dispatch.
+- owner-calendar.yml: daily at 02:23 UTC, manual dispatch and selected source pushes; refreshes the owner's assets and README summary in this repository only.
+
+Generated workflow commits use GITHUB_TOKEN and may not trigger other workflows. Check Actions history and logs rather than assuming downstream jobs ran.
+
+## Change discipline
+
+1. Inspect Git status, branch, recent commits and current remote head before editing.
+2. Read relevant docs, source and tests. Establish implemented/partial/planned/deprecated status from evidence.
+3. Add or update tests with behaviour changes.
+4. Regenerate only the affected assets from source.
+5. Run the complete relevant test suite.
+6. Update architecture, data and roadmap docs in the same PR.
+7. Inspect README links and generated asset inventory.
+8. Preserve local changes and never merge or publish a release without explicit approval.
 
 ## Troubleshooting
 
-- **Cannot import module**: serve preview.html via an HTTP server, not file://.
-- **No comets in ten-event fixture**: expected. Its dates are isolated, so a truthful renderer shows zero streaks.
-- **GIFs missing in a fresh checkout**: use export_gif.py, or inspect the preview-generation Actions workflow.
-- **Pillow/Playwright unavailable**: SVG export and Node tests still work. The Python GIF encoder and browser smoke checks require optional dependencies.
-- **Windows Playwright browser install fails**: run py -3 -m playwright install chromium and verify browser cache; no WSL is required.
-- **GitHub SVG animation appears static**: GitHub image proxy may suppress SVG motion. Use native GIF and static SVG fallback.
-- **Synthetic labels**: do not remove them to make the image appear personalised. Implement the official collector instead.
-
-## Real GitHub calendar and consumer Action
-
-See docs/PROFILE_INSTALLATION.md for a full consumer workflow. For the read-only CLI, set GH_TOKEN locally, run node collect-contributions.mjs --username USER --out local-output/official.json, then node export.mjs --input local-output/official.json --out local-output/images --design all --theme both. Run py -3 export_gif.py --source local-output/images --out local-output/images for six GIFs. Keep local-output ignored. Never put secrets or raw account snapshots in source control. Scheduled updates in this repository begin after approved merge; installing into the owner's profile is a separate explicit decision.
+- Browser module import errors: serve preview.html over localhost, not file://.
+- No comets in the ten-event fixture: expected; its dates are isolated.
+- No API data: verify GH_TOKEN/GITHUB_TOKEN is set and can access GitHub GraphQL.
+- Incomplete calendar or GraphQL error: collection fails closed; do not substitute synthetic data.
+- Rate limit or transient network failure: current collector does not retry; rerun after checking GitHub status and token limits.
+- Missing GIFs: install Pillow, Playwright and Chromium, then run export_gif.py.
+- GIF appears static on GitHub: proxy playback has not been independently confirmed. Use the native GIF and provide a still SVG fallback.

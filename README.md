@@ -80,8 +80,8 @@ Requires Node.js 20+ and Python 3.11+; the SVG renderer has **no npm dependencie
 git clone https://github.com/AdityaSreevatsaK/GitHub-Constellation.git
 cd GitHub-Constellation
 
-# Verify deterministic calendar model, SVG motion and data validation
-node --test tests/test_engine.mjs tests/test_motion.mjs
+# Run all Node tests, including official data, Action validation and README statistics
+node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs tests/test_readme.mjs
 
 # Regenerate all still and animated SVGs from the ten-event synthetic fixture
 node export.mjs
@@ -93,7 +93,7 @@ node export.mjs --input fixtures/streak-demo.json --out assets/stress --label "S
 py -3 -m http.server 8000
 ~~~
 
-Open **http://localhost:8000/preview.html**. The gallery supports all three designs, both themes, two fixtures, side-by-side comparison, pause and keyboard-readable day inspection. On mobile, calendars scroll horizontally within their panels.
+Open **http://localhost:8000/preview.html**. The gallery supports all three designs, both themes, two synthetic fixtures, side-by-side comparison, pause and keyboard-readable day inspection. It does not fetch the owner's official data. On mobile, calendars scroll horizontally within their panels.
 
 Optional animated GIF generation:
 
@@ -107,16 +107,33 @@ py -3 tests/browser_smoke.py
 
 GIFs are 720 by 234 pixels, play for 16 seconds and must pass frame-duration and visible-motion tests.
 
+## Collect and render an official GitHub calendar
+
+The read-only collector queries the official GitHub GraphQL contribution calendar and writes a separate v2 snapshot. It requires GH_TOKEN or GITHUB_TOKEN in the environment; never commit the snapshot.
+
+~~~powershell
+$env:GH_TOKEN = "YOUR_TOKEN"
+node collect-contributions.mjs --username YOUR_GITHUB_USERNAME --out local-output/official.json
+node export.mjs --input local-output/official.json --out local-output/images --design all --theme both
+py -3 export_gif.py --source local-output/images --out local-output/images
+Remove-Item Env:GH_TOKEN
+~~~
+
+The collector supports --as-of YYYY-MM-DD, defaulting to the current UTC date. It validates the complete 53-week calendar window and fails closed on API errors. The output is labelled API-visible; private contribution visibility depends on GitHub settings and token authorisation. See [data contracts](docs/DATA_CONTRACT.md), [source and privacy rules](docs/DATA_SOURCES.md) and [Action installation](docs/PROFILE_INSTALLATION.md).
+
 ## Architecture at a glance
 
-- **engine.mjs**: strict event snapshot parser, date-to-cell mapping, daily aggregation, streaks, three SVG renderers and themes.
-- **export.mjs**: offline, deterministic SVG export.
-- **export_gif.py**: optional Chromium/Pillow GIF capture, timing preservation and playback validation.
-- **preview.html**: interactive browser gallery with source-based inspector and accessibility controls.
+- **engine.mjs**: shared 371-cell model, strict event-sample and official-calendar parsers, streaks and three SVG renderers.
+- **official_calendar.mjs / collect-contributions.mjs**: authenticated, read-only GitHub GraphQL collector and validated local snapshot CLI.
+- **export.mjs / export_gif.py**: deterministic SVG export and optional Chromium/Pillow native GIF encoding.
+- **preview.html**: interactive gallery for the two synthetic fixtures only; it does not load live account data.
+- **action.yml / validate-action.mjs**: reusable composite Action with validated inputs and safe workspace output.
+- **update_readme_stats.mjs**: keeps the marked README summary aligned with official assets.
 - **fixtures/**: ten-event and stress-test **synthetic** snapshots.
-- **tests/**: JavaScript, Python, GIF and browser smoke regression suites.
-- **assets/**: generated still and animated SVGs; stress assets include workflow-generated GIF previews.
-- **docs/**: architecture, data contracts, migration provenance, developer instructions, test plan and agent roadmap.
+- **tests/**: five Node test files, Python GIF tests and offline Chromium browser smoke.
+- **assets/**: synthetic SVG/GIF exports and API-visible owner previews under assets/real/AdityaSreevatsaK/.
+- **.github/workflows/**: quality gates, synthetic GIF generation and owner-only daily refresh.
+- **docs/**: architecture, both data contracts, source provenance, development, testing, migration and current roadmap.
 
 Start with [AGENTS.md](AGENTS.md) when using AI coding agents, then [architecture](docs/ARCHITECTURE.md), [data integrity](docs/DATA_SOURCES.md), [development](docs/DEVELOPMENT.md), [quality gates](docs/TESTING.md) and [next implementation tasks](docs/ROADMAP.md).
 
