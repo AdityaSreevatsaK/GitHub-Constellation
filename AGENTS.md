@@ -31,7 +31,7 @@ Before any substantial task, establish what is true **now**. Do not start from a
    git diff --stat origin/master...HEAD
    git show --stat --oneline HEAD
    ~~~
-   If fetch is unavailable, state that limitation and use the latest accessible GitHub branch, commit and Actions data. Do not claim to have inspected a local working tree when you have not.
+   The comparison above assumes the current default branch is master. If GitHub reports a different default branch, substitute its actual remote ref. If fetch is unavailable, state that limitation and use the latest accessible GitHub branch, commit and Actions data. Do not claim to have inspected a local working tree when you have not.
 4. Inspect the current tree, source files and matching tests for the requested change. Check recent commits and generated assets, not just filenames.
 5. Inspect current GitHub state where relevant: open and recently merged PRs, issues, branch heads, releases/tags, workflow definitions and the latest successful and failed Actions runs. A workflow existing in the tree does not prove it is enabled or passing.
 6. Read the relevant project documents below, then reconcile every material statement with code, tests, workflow configuration and recent Git history.
@@ -125,6 +125,10 @@ Run the complete offline regression suite:
 
 ~~~powershell
 node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs tests/test_readme.mjs
+
+# Optional Python/browser dependencies, installed once per environment
+py -3 -m pip install pillow playwright
+py -3 -m playwright install chromium
 py -3 -m unittest tests/test_gif.py -v
 py -3 tests/browser_smoke.py
 ~~~

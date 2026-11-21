@@ -20,6 +20,15 @@ git status --short --branch
 
 ## Fast regression loop
 
+The Node suite has no dependencies. Install the optional Python tools once before running GIF tests or browser smoke:
+
+~~~powershell
+py -3 -m pip install pillow playwright
+py -3 -m playwright install chromium
+~~~
+
+Then run the regression suites:
+
 ~~~powershell
 node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs tests/test_readme.mjs
 py -3 -m unittest tests/test_gif.py -v
