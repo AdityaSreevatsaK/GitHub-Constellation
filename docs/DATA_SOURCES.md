@@ -1,102 +1,75 @@
-# Activity sources, truthfulness and privacy
+# Data sources, provenance and privacy
 
-This document is a **mandatory acceptance contract** for any collector, fixture, renderer or README description. Source provenance is as important as appearance.
+Source truth is a core product requirement. Every displayed day and metric must be traceable to its input contract.
 
-## A. Current source: event-sample contract v1
+## 1. Synthetic event samples
 
-Both checked-in fixtures are synthetic and incomplete event observations.
+The repository contains two synthetic contract-v1 fixtures:
 
-- **fixtures/demo-activity.json:** shared ten-event fixture, ten isolated days, no consecutive streaks.
-- **fixtures/streak-demo.json:** 69 invented example events on 65 active dates, with seven date-consecutive streaks.
-- **source=demo:** always display a synthetic-demo label. No owner-specific assertions.
-- **source=github under contract v1:** denotes recorded GitHub *events* only. It is not authoritative for GitHub's profile contribution totals.
-- **count:** a positive source-backed integer per event. Summing commit, PR-open, PR-merge, issue and release records gives mixed **recorded activity units**, never a GitHub contribution total.
-- **Missing event:** no observation in the input. A dark square does not prove that no GitHub contribution occurred.
+- fixtures/demo-activity.json: ten isolated example events on ten dates, with no consecutive-date streaks.
+- fixtures/streak-demo.json: 69 invented example events across 65 active dates, used to demonstrate dense calendars and true consecutive-date runs.
 
-Never use fake events to fill gaps in real personalised imagery. Do not rename a synthetic file to imply it came from the user.
+These fixtures are for design, testing and the local browser gallery. They are not the owner's GitHub history. Keep synthetic labels visible in generated assets and README galleries.
 
-## B. Official GitHub contribution calendar: implemented on master
+Contract-v1 source github is accepted by the parser for an externally supplied event sample, but this repository does not currently contain a live GitHub event collector. Event counts are mixed recorded activity units, not official contribution totals.
 
-Use GitHub GraphQL and query the intended GitHub user:
+A missing event means no event was supplied. It does not establish that GitHub recorded zero contributions that day.
 
-~~~graphql
-query($login: String!, $from: DateTime!, $to: DateTime!) {
-  user(login: $login) {
-    login
-    contributionsCollection(from: $from, to: $to) {
-      contributionCalendar {
-        totalContributions
-        weeks {
-          contributionDays {
-            date
-            contributionCount
-            color
-            weekday
-          }
-        }
-      }
-    }
-  }
-}
-~~~
+## 2. Official GitHub contribution calendar
 
-The source-backed collector now lives in `official_calendar.mjs` and `collect-contributions.mjs`. It reads the GraphQL `contributionCount`, `contributionLevel`, `date` and `weekday` fields, validates the response and emits a separate `2-official-calendar` JSON contract. Two contiguous windows ensure the 53-week display is covered without exceeding one-year query windows. The real owner workflow successfully exercised this collector on 18 November 2026. Treat API-returned **date** as canonical; never convert it through a local timezone in a way that shifts cells.
+The implemented official collector queries GitHub GraphQL at https://api.github.com/graphql. It requests the selected user's contributionsCollection.contributionCalendar, including daily date, weekday, contributionCount and contributionLevel. The response is normalised into contract v2, not event contract v1.
 
-Proposed distinct model:
+The collection window is a 53-week display: Sunday 52 weeks before the week containing the as-of date through the as-of date. The collector splits this into two sequential GraphQL requests: the first 14 days and the remaining dates. It does not assume the GraphQL week padding outside each requested window is coverage.
 
-~~~json
-{
-  "schema_version": "2-official-calendar",
-  "source": "github_contribution_calendar",
-  "login": "example",
-  "fetched_at": "2026-11-18T00:00:00Z",
-  "window": {"from": "2025-11-18", "to": "2026-11-18"},
-  "calendar_days": [
-    {"date": "2026-11-17", "contribution_count": 3}
-  ],
-  "coverage": {"complete": false, "warning": "illustrative, not a full-year response"}
-}
-~~~
+Validation rejects:
 
-The example above is schema discussion only. A true response MUST pass full-window completeness checks and should never be published with complete=false. Define and test this schema before enabling it as an engine input. Preserve day counts, official semantics and clear legends. Do not convert a count into N fictitious commits or repositories.
+1. Missing or different user identity.
+2. GraphQL errors or missing calendar structures.
+3. Invalid ISO dates or weekday/date disagreement.
+4. Negative, non-integer or excessive daily counts.
+5. Unknown contribution levels or zero/count-level contradictions.
+6. Duplicate dates, missing dates or unexpected coverage.
+7. Invalid or future as-of dates.
+8. A snapshot whose displayed total does not match the daily counts when parsed by the renderer.
 
-## C. Authentication and security
+The GraphQL request has a 20-second timeout per window. Failures stop the collection. There is currently no automatic retry, rate-limit backoff or stale-cache fallback. Do not claim otherwise.
 
-- Token is read from a secret or environment variable on the trusted collector side, never committed.
-- Default to read-only permissions; do not request repository write access just to query the calendar.
-- GitHub Action output publishing requires separate explicitly scoped contents:write permission to its own destination repository, not collector authority for arbitrary repositories.
-- Never include the token, unredacted headers, private-repository names, GraphQL sensitive error payloads or unrelated user data in logs, SVG tooltips or shipped fixtures.
-- For other public accounts, distinguish public contributions from any authenticated private-contribution visibility. Do not assert a total when scope prevents complete verification.
-- Implement timeouts, rate-limit handling and actionable authentication errors; never silently substitute synthetic data on HTTP failure.
-- Restrict user-supplied URLs and file destinations; guard against path traversal and output injection.
+The collector uses GitHub's returned calendar date as canonical. Do not convert it through local time and shift a day. It validates weekday against the UTC calendar date.
 
-## D. Validation of an official-calendar response
+## 3. What API-visible means
 
-Before rendering a personalised asset, verify at minimum:
+The snapshot visibility is explicitly api_visible. The number is the sum of daily contributionCount values returned for that authenticated query and selected account. It is not independently certified as the complete private-plus-public total.
 
-1. Requested login exists and matches the returned account identity.
-2. Authentication succeeded; no GraphQL errors; expected fields and types are present.
-3. Requested date range is explicit, includes the intended calendar period and does not accidentally include unsupported future contributions.
-4. Every returned week contains correct weekday order, no duplicate days and valid ISO dates.
-5. Every count is a non-negative integer; no negative/NaN or fictional default values.
-6. Calendar coverage and server date span are measured, not inferred from the current event-sample implementation.
-7. Total count semantics are verified against the API response (window and possible calendar-alignment differences considered).
-8. Private contribution visibility and account permissions are honestly labelled.
-9. Rendered cell dates and daily counts agree with the raw, normalised calendar snapshot.
-10. A failed/stale API response does not produce a misleading 'live' badge or overwrite a known-good profile asset.
+GitHub's [GraphQL ContributionsCollection reference](https://docs.github.com/en/graphql/reference/users#contributionscollection) states that contributions from private and internal repositories are included only with the optional read:user scope. GitHub also documents that restricted-contribution indicators are available only when the user has enabled private contribution counts.
 
-## E. Visual semantics
+The current owner workflow passes the repository GITHUB_TOKEN. That token is not a user-authorised token carrying the optional read:user scope, so the current owner preview must be treated as public/API-visible activity, not a verified private-inclusive total. The collector does not request hasAnyRestrictedContributions and cannot independently detect whether hidden activity was omitted. For private-inclusive collection, the user must enable private contribution counts and provide a suitable user-authorised token with read:user through a secret. Verify the actual result before describing it as private-inclusive.
 
-For event-samples: legend reads 'Recorded activity units'; brightness thresholds 1, 2-3, 4-6 and 7+. For official data: legend reads 'GitHub contributions' with thresholds explicitly chosen and labelled for that source.
+No private repository names are queried or stored. The public preview does reveal the daily activity counts returned by the API for the owner. Consider this when changing publication behaviour.
 
-Do not equate colour returned by GitHub with numeric thresholds without verification. Always show actual numeric daily counts in available interactive inspection, and do not imply invisible/unknown activity is zero.
+## 4. Authentication and secrets
 
-## F. Privacy, reproducibility, observability
+- Local CLI reads GH_TOKEN first, then GITHUB_TOKEN.
+- Composite Action receives a required token input and passes it to the collector as GH_TOKEN.
+- The owner workflow uses the repository's GITHUB_TOKEN secret.
+- Never hardcode a token, print request headers, save credentials in snapshots or expose raw GraphQL error bodies.
+- Do not commit local-output/ or private-data/ contents.
+- The Action needs no repository write permission for collection or rendering. A calling workflow needs contents: write only if it chooses to commit generated assets.
+- The owner workflow has repository-level contents: write permission because it commits the owner preview assets and README summary. Its script stages only those paths; GitHub does not enforce path-level limits on that token permission.
 
-- Tests must be entirely offline with labelled fixtures/mocked GraphQL responses.
-- If scheduled updates are introduced, distinguish checked/fetched at from activity day, and avoid committing raw personal history when it is not necessary for output.
-- Use actor-safe filenames/paths and stable sorting.
-- Prefer metadata containing source type, generated time, GitHub username and query range (but no secrets).
-- For publicly released Actions, document token requirements separately for the data-query and output-write stages.
+## 5. Visual semantics
 
-See DATA_CONTRACT.md for the existing event-sample schema and ROADMAP.md for migration to an official-calendar pipeline.
+| Source | Meaning | Intensity |
+|---|---|---|
+| Contract v1 | Recorded events in the supplied sample | Mixed activity-unit bands: 1, 2-3, 4-6, 7+ |
+| Contract v2 | API-visible GitHub daily contribution counts | GitHub contribution levels: none and first through fourth quartile |
+
+Do not use one source's legend for the other. A synthetic fixture must never be used as a fallback for an official query failure. The date position and number of active stars must remain identical across all three designs for the same snapshot.
+
+## 6. Publication and reproducibility
+
+- The owner workflow publishes SVG/GIF previews and a count/timestamp summary, not the raw v2 JSON snapshot.
+- The README summary is derived from the validated snapshot used by the same workflow run.
+- Test fixtures and unit tests must remain offline and must not contain credentials.
+- A failed collection must not overwrite the previous public preview.
+- Keep provenance visible in SVG metadata and descriptions.
+- If adding support for another account, explain the selected token and visibility semantics without exposing private repository details.

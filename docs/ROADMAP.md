@@ -1,88 +1,85 @@
-# Implementation roadmap for AI agents
+# Project roadmap and live status
 
-**Status at migration, 18 November 2026:** the three visual engines, 24 SVG exports, synthetic fixtures and offline unit/browser test code were copied from Studio concept/constellation at be7f524. Six GIF binaries could not be directly transferred as Git objects across repositories; they were successfully regenerated and committed in standalone GitHub Actions run 44268515679. Standalone quality gates **passed** at commit ba81f083 ([Actions run 44269551217](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44269551217)): 28 Node tests, five Python GIF tests, desktop/mobile Chromium smoke and deterministic 24-SVG verification. All six GIFs exist; only independent human observation of GitHub-hosted image playback remains outstanding.
+**Last repository audit:** 21 November 2026. This roadmap is a maintained snapshot, not a substitute for inspecting the current branch, code and Actions state. The README owns the automatically refreshed contribution totals; do not duplicate changing counts here.
 
-## Current development progress (18 November 2026)
+## Current state
 
-- **P1 implemented and exercised:** official GraphQL collector (two date-scoped requests) validates every visible day, user identity and per-day counts/intensity without creating fake events.
-- **Real owner preview succeeded:** first real API-visible image run confirmed 1,803 contributions across 99 active dates and 16 consecutive-day runs as at 18 November 2026. Six animated GIFs and twelve SVGs committed to master after approved PR #1. Live image-proxy playback still awaits human inspection.
-- **P2 merged to master:** reusable composite Action, strict output-path handling and owner preview workflow. A separate real-account smoke step successfully invoked the composite Action with GIF rendering disabled. Daily scheduled refresh is enabled in master; the owner's actual profile remains untouched.
-- **Review boundary:** PR #1 was approved and squash-merged into master at 1d87603fac77371c25d6b982eef1ad3beb2945fb, with no profile installation, release or licence change.
+### Implemented and verified
 
+- Standalone repository migrated from GitHub-Activity-Studio. The original Studio PR #1 was closed as superseded, not merged.
+- Three distinct designs: Comet Streaks, Celestial Cartographer and Starforge, each with night and paper themes.
+- Shared 371-cell calendar model and separate event-sample v1 and official-calendar v2 parsers.
+- Offline synthetic gallery, deterministic SVG export and optional native GIF export.
+- Authenticated official GitHub GraphQL collector with two date windows and strict completeness/identity/date/count/level validation.
+- Reusable composite Action with validated input and safe workspace output paths.
+- Owner-only daily preview workflow, including real Action smoke, twelve SVGs, six 16-second GIFs and README count/timestamp refresh.
+- CI currently covers 42 Node tests, five Python GIF tests, Chromium desktop/mobile smoke and SVG reproducibility.
+- The live GitHub profile repository has not been modified. No licence, release tag or stable Action version has been selected.
 
-## P0. Establish independent repository and migration parity
+### Partially verified
 
-**Goal:** fully runnable, reproducible, visually complete standalone Constellation. **Engineering migration verified** by successful standalone Actions (18 November 2026); human playback review remains outstanding.
+- GitHub-hosted GIF playback: the native files are generated and their timing/motion are checked, but actual playback in the rendered README has not been visually confirmed.
+- Consumer Action: the Action is exercised in the owner repository, but a clean external consumer repository and a range of token/visibility configurations have not been tested.
+- Private contribution completeness: GitHub requires optional read:user scope and the user's private-contribution visibility setting for private/internal counts. The current owner workflow uses repository GITHUB_TOKEN and is public/API-visible only. The collector does not yet query hasAnyRestrictedContributions to detect omitted activity.
 
-Deliverables:
-- Root engine.mjs, export.mjs, export_gif.py, preview.html and all modern tests.
-- Local demo and stress fixtures, eliminating references to the old shared/ path.
-- 24 deterministic SVG assets.
-- Six GitHub-compatible synthetic GIFs, 16 sec each, both themes.
-- Comprehensive README, AGENTS.md and architecture/data/development/quality/migration docs.
-- GitHub test CI plus separate GIF-preview workflow.
-- Verify local/CI tests and actual GitHub README playback.
-- Studio PR #1 was linked to this standalone repository and closed as superseded without merging on 18 November 2026; original source branch/history are preserved.
+### Not implemented
 
-**Pass:** fresh clone succeeds; Node tests 28/28, Python GIF tests 5/5, browser smoke at desktop and mobile, and all expected assets exist with correct links. **Blocked:** GitHub Actions cannot commit GIFs, missing files or unverified live playback.
+- Installation or automated commits in the owner's separate profile repository.
+- Automatic retry and rate-limit backoff for GraphQL collection.
+- A versioned public Action release/tag and licence.
+- Configurable Action as-of date or arbitrary date range. The local collector supports --as-of only.
 
-## P1. Official GitHub contribution-calendar collector, starting with AdityaSreevatsaK
+### Deprecated or historical
 
-**Implementation and real-account collection verified on master. Keep the next tests, provenance and consumer integration honest.**
+- Early radial, clustered, calendar-atlas and calendar-trails experiments were rejected because they weakened recognition of the familiar GitHub calendar. They remain in Studio history, not this standalone renderer.
+- docs/AGENT_WORKPLAN.md is superseded by this roadmap and AGENTS.md.
+- Studio's draft PR and branch are migration provenance only.
 
-Implementation plan:
-1. Verify the live GitHub GraphQL schema and API limits for user(login) and contributionsCollection.contributionCalendar, date-window options, permissions, hidden/private contribution semantics and calendar boundaries.
-2. Implement a **read-only CLI** that accepts a username and a date window; secrets only in environment variables. Do not require a token for offline rendering/testing.
-3. Introduce an explicit **official-calendar schema**, distinct from contract v1, with documented source provenance, selected account, fetch timestamp, date range, days and daily counts.
-4. Create schema validation and offline normalisation fixtures; ensure duplicate dates, gaps and invalid counts are rejected or clearly reported.
-5. Adapt the shared calendar model to official daily contribution counts without invented repository events; preserve both kinds of sources.
-6. Extend all three designs to render official units with truthful intensity and legend.
-7. Generate a personalised still and animated output for AdityaSreevatsaK after successful complete collection.
-8. Explain if count visibility is incomplete and never mix public vs private contributions ambiguously.
+## Priority 0: visual verification on GitHub
 
-**Pass:** output positions/counts match a verified GraphQL response for the intended account; no synthetic data is presented as real; all designs/theme combinations pass tests.
+- Inspect all six official GIFs in the actual GitHub README at desktop and narrow widths, and in light/dark GitHub themes.
+- Confirm the calendar remains recognisable, labels legible and animation motion visible in GitHub's image proxy.
+- If the proxy suppresses or alters playback, keep GIF as the animation format and static SVG as the reduced-motion fallback; document the observed behaviour.
 
-## P2. Public reusable action and profile automation
+**Done when:** a human has inspected the live rendered README and recorded the result with date and screenshots or a concise evidence note.
 
-**Goal:** any GitHub user can install the action and display chosen animation in their README. **Composite Action and example consumer workflow implemented; no automatic live profile installation.**
+## Priority 1: consumer Action acceptance
 
-Requirements:
-- Action inputs: username, design, theme, date range, output directory, file format and explicit privacy behaviour.
-- Reproducible Node/ Python environment with cache and rate-limit management.
-- Minimum permissions: separate read-only collector token and narrowly scoped write permission where an output commit is required.
-- Manual workflow_dispatch and documented daily schedule for consumers, with concurrency protection and commit-if-changed.
-- No leaked secrets in logs or generated images; no automatic modifications to the owner's live profile without explicit approval.
-- Clear example README embed instructions and error recovery on a clean repository.
+- Test a clean external repository with the documented workflow and no owner-specific assumptions.
+- Verify the public/API-visible query with a repository GITHUB_TOKEN and document when a user-provided token is required.
+- Test account mismatch, invalid token, missing permission, rate-limit, timeout and failed collection. Confirm old output is not overwritten.
+- Confirm the Action creates only the requested SVG/GIF files and never commits or pushes by itself.
+- Consider adding a supported as-of input only if it has a clear consumer use case.
 
-**Pass:** fork-safe CI, no paid dependencies, verified daily/action/manual runs, authentic official contributions and documented reusable installation.
+**Done when:** a fresh consumer can follow the guide, generate assets, and publish them only through their own explicitly authorised workflow.
 
-## P3. Visual polish, customisation and accessibility
+## Priority 2: collector resilience and security hardening
 
-- Compare at full size and actual GitHub README width in light and dark mode.
-- Improve distinction between low/high daily contribution counts on the final official data.
-- Refine art, tasteful movement, visual identity, static finale and animation pacing without hiding the chart.
-- Add option validation and reasonable customisation without making the project overly complex.
-- Retain meaningful reduced-motion and mobile accessibility; run visual/perceptual review.
+- Add bounded retry/backoff for transient HTTP failures and GitHub rate-limit responses, without logging tokens or raw sensitive errors.
+- Add tests for retry limits, rate-limit headers, timeout and cancellation.
+- Review third-party Action references and pin dependencies to immutable SHAs where practical.
+- Review Action path validation and output collision behaviour before broader adoption.
 
-**Pass:** each design unmistakably recognisable, distinct in mechanics, readable at profile size and source-faithful.
+**Done when:** failures are bounded, actionable, tested offline and never replace a valid previous preview.
 
-## P4. Public release readiness
+## Priority 3: visual polish and accessibility
 
-- Owner selects licence; publish only after choice.
-- Add contributor guidelines and security policy, issue/PR templates and compatible release/version policy.
-- Produce concrete quick-start instructions and a maintainable test matrix.
-- Check GitHub-hosted GIF playback and image size/refresh performance.
-- Confirm privacy, token handling and provenance documentation.
-- Release version only on explicit owner approval.
+- Inspect all designs at real README width and on mobile.
+- Review low/high contribution-level distinction in both themes, contrast, text sizing, static final frames and reduced-motion output.
+- Keep the three mechanics recognisably different without obscuring the 53x7 grid.
+- Add visual regression evidence if it can be maintained without fragile snapshots.
 
-## Change process
+**Done when:** all designs are legible at embed size, accessible and factually aligned to the same dates.
 
-Each AI agent must actually implement approved work, run relevant tests, export fixtures, commit code and update this roadmap. Prefer focused draft PRs, and do not merge or change master after the initial migration without authorisation. Never assume another session has completed a milestone without verifying current repository state.
+## Priority 4: public release decision
 
-## Verified work merged into master
+- Owner chooses and adds a licence before inviting reuse.
+- Select a stable Action version/tag and document a SHA-pinned consumer example.
+- Confirm SECURITY.md reporting path and contributor expectations.
+- Publish a release only after explicit owner approval.
 
-Authenticated GraphQL collection and rendering succeeded on 18 November 2026 for AdityaSreevatsaK: 1,803 API-visible contributions, 99 active dates and 16 consecutive-day runs. Both themes across all three designs are committed as 12 SVGs and six native GIFs. The composite Action was exercised with real API input. See CI run 44317579330 for 39 Node tests, five Python GIF tests, browser checks and SVG validation; see owner preview run 44316951258 for authenticated collection and GIFs. Master includes the approved implementation. The live GitHub profile repository remains unchanged.
+**Done when:** licence, version, docs and examples agree, and the owner approves release.
 
-## Latest refresh improvement
+## Change-management rule
 
-The owner workflow now writes verified contribution totals and collection timestamps into the README between clearly delimited markers, alongside its six generated GIFs and twelve SVGs. It commits only the README summary and published image assets. The summary is derived from the same validated official response as the SVGs, so daily updates cannot leave a static count misleading readers. The source snapshot and token remain uncommitted.
+At the start of each task, inspect Git status, branch, recent commits, current source, tests and latest Actions. Reclassify each relevant milestone from evidence. Update this roadmap only when the implementation or verification state actually changes. Do not treat a plan, prior chat or workflow YAML as proof of completion.

@@ -2,21 +2,26 @@
 
 ## Scope
 
-This is currently an experimental offline SVG/GIF renderer. GitHub API collection, personal token support and reusable profile automation are **not yet implemented**. As those features arrive, treat source authenticity and token safety as critical.
+GitHub Constellation includes an offline renderer, an authenticated read-only GitHub GraphQL collector and a composite GitHub Action. The owner-only workflow publishes generated API-visible calendar imagery and a summary to this repository.
 
 ## Reporting
 
-For a security concern, use GitHub's private vulnerability reporting feature if enabled; otherwise contact the repository owner privately. Do not publish tokens, private repository identities, exploit payloads or credentials in public issues.
+Report security issues privately through GitHub's private vulnerability reporting feature if it is enabled for this repository. Otherwise contact the repository owner privately. Do not publish credentials, private repository identities, exploit payloads or raw authenticated responses in public issues.
 
-## Engineering requirements
+## Security requirements
 
-- Never commit environment files, tokens, keys, cookies, OAuth headers or credentials.
-- Validate and escape untrusted user/repository labels, URLs, dates and counts before producing SVG/HTML.
-- Render only source-backed calendar cells; do not fetch arbitrary URLs from user-controlled input.
-- Read-only collector tokens and narrowly scoped output-write permissions must remain separate.
-- Avoid leaking private contribution details in publicly committed data, logs or generated images.
-- Reject incomplete or stale source collections instead of substituting synthetic data.
-- No external trackers, analytics, paid services, remote fonts or scripts in generated SVGs.
-- Pin/update dependencies reasonably; CI must test both engine and optional GIF/browser pipelines.
+- Never commit tokens, environment files, keys, cookies, OAuth headers or credentials.
+- The collector reads GH_TOKEN or GITHUB_TOKEN from the process environment. The composite Action passes its required token input through an environment variable. Never place tokens in source code or logs.
+- Do not print request headers or raw GraphQL error bodies. Keep error messages actionable but sanitised.
+- Do not commit local-output/ or private-data/ snapshots. Raw official calendar payloads are not required in public assets.
+- Treat all input JSON, usernames, URLs, labels and output paths as untrusted. Validate identities and dates, escape SVG/HTML content and reject workspace path traversal or unsafe symlinks.
+- Do not fetch arbitrary URLs supplied by input data.
+- Never convert synthetic fixtures into a personalised fallback after API failure.
+- API-visible contribution totals may not include all private activity. Avoid publishing private repository names or claiming completeness beyond the token and account settings.
+- The owner workflow uses contents: write only to commit its public preview assets and README summary to this repository. The reusable Action itself does not push.
+- Keep dependencies and GitHub Action references reviewed. Prefer immutable SHA pins for third-party Actions in consumer workflows.
+- Do not add trackers, analytics, remote fonts or untrusted runtime scripts.
 
-Do not disclose a vulnerability publicly before the owner has been given a reasonable opportunity to remediate it.
+## Current limitations
+
+The collector has a 20-second timeout per GraphQL request and fails closed, but it does not yet retry transient failures or implement rate-limit backoff. The Action is smoke-tested in the owner repository; broader external-consumer and token-scope testing remains on the roadmap.

@@ -2,27 +2,34 @@
 
 Describe the practical change and user-visible effect.
 
+## Repository state checked
+
+- [ ] Inspected current branch, Git status, uncommitted changes and recent commits.
+- [ ] Checked the latest relevant Actions runs and open PRs/issues.
+- [ ] Confirmed whether the requested capability is implemented, partial, planned or deprecated.
+
 ## Data integrity and provenance
 
-- [ ] All highlighted calendar dates are backed by the selected source.
-- [ ] Demo assets are labelled synthetic; official contribution counts are not confused with mixed event units.
-- [ ] No private data, tokens or untrusted HTML were introduced.
+- [ ] All highlighted dates are backed by the selected input source.
+- [ ] Synthetic event samples remain labelled; mixed activity units are not called official contribution counts.
+- [ ] Official calendar counts remain API-visible and are not presented as guaranteed private-plus-public totals.
+- [ ] No private data, raw authenticated snapshots, tokens or untrusted HTML were introduced.
 
 ## Validation
 
-- [ ] Node unit/motion tests
+- [ ] Node regression suite
 - [ ] Python GIF tests
 - [ ] Chromium browser smoke where applicable
-- [ ] Both themes and all three animations reviewed
-- [ ] SVG exports regenerated when needed
-- [ ] GitHub-hosted preview checked (or explicitly marked unverified)
+- [ ] Both themes and all three designs reviewed where affected
+- [ ] SVG/GIF exports regenerated where required
+- [ ] Actual GitHub README playback checked or explicitly marked unverified
 
 Commands run and outcomes:
 
-## Assets and screenshots
+## Documentation and assets
 
-Link changed still/animated outputs in this repository.
+List documentation, tests, SVG/GIF assets and screenshots changed.
 
 ## Risks and remaining work
 
-Document any unresolved blocker, needed API permissions or GitHub preview caveat.
+Document unresolved behaviour, permissions, workflow limitations and next steps.

@@ -1,63 +1,50 @@
-# Verification and acceptance plan
+# Testing and verification
 
-## Test matrix
+## Current automated test matrix
 
-| Area | Check | Implemented test or command |
+| Suite | Coverage | Command / evidence |
 |---|---|---|
-| Calendar | Exactly 53 x 7 slots; Sunday-first; correct column/row and future-day mapping | tests/test_engine.mjs |
-| Time | Correct UTC dates, leap days, year/week transitions and generated_at boundaries | tests/test_engine.mjs |
-| Provenance | Contract v1 source validation, untrusted URLs, event kinds and counts | tests/test_engine.mjs |
-| Deduplication | Duplicate IDs ignored, same-day events become one day-star | tests/test_engine.mjs |
-| Streaks | Only true adjacent dates; singletons and missing days break runs; week wrap | tests/test_engine.mjs + tests/test_motion.mjs |
-| Intensity | Source-backed summed units and matching legend; no fabricated contributions | tests/test_engine.mjs |
-| Rendering | Three designs, two themes, accessible self-contained SVGs, deterministic output | tests/test_engine.mjs |
-| Motion | Comet/week wrap and Starforge arrival alignment | tests/test_motion.mjs |
-| GIF | Exactly 16 s encoded duration, repeated-tail handling, visible motion, dimensions and size | tests/test_gif.py |
-| Browser | All controls, pause, compare, focus/inspector, no errors, mobile/desktop overflow | tests/browser_smoke.py |
-| CI | Node + Python regression and optional browser smoke | .github/workflows/tests.yml |
-| Asset regeneration | Six night/paper GIFs and encoder regression | .github/workflows/generate-gifs.yml |
+| tests/test_engine.mjs | v1/v2 parsing, 371 cells, date boundaries, validation, deduplication, intensity, deterministic SVG | Node test runner |
+| tests/test_motion.mjs | Comet adjacency/week wrap, Cartographer/Starforge distinction, timing and final stills | Node test runner |
+| tests/test_official.mjs | GraphQL windows, completeness, identity, dates, weekday, count/level validation, failures and API snapshot behaviour | Node test runner |
+| tests/test_action.mjs | Invalid username/design/theme and unsafe workspace output paths | Node test runner |
+| tests/test_readme.mjs | Official-only README summary, timestamp/count derivation and marker safety | Node test runner |
+| tests/test_gif.py | Exact 16-second loop, malformed frames, coalesced trailing frames, dimensions and visible motion | Python unittest |
+| tests/browser_smoke.py | Synthetic gallery at 390px and 1280px, designs/themes, compare, pause, keyboard focus and overflow | Playwright Chromium |
 
-## Commands
+Run all suites:
 
 ~~~powershell
-node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs
+node --test tests/test_engine.mjs tests/test_motion.mjs tests/test_official.mjs tests/test_action.mjs tests/test_readme.mjs
 py -3 -m unittest tests/test_gif.py -v
-
-# Chromium optional on a workstation
-py -3 -m pip install pillow playwright
-py -3 -m playwright install chromium
 py -3 tests/browser_smoke.py
-py -3 export_gif.py
-
-# Regenerate SVGs
-node export.mjs
-node export.mjs --input fixtures/streak-demo.json --out assets/stress --label "SYNTHETIC STREAK STRESS TEST"
 ~~~
 
-## Merged quality gate: planned production readiness
+The Node suite is dependency-free. Python GIF tests require Pillow for the GIF-specific cases. Browser smoke requires Playwright and Chromium. In CI, the workflow uses Node 22 and Python 3.11, installs Pillow/Playwright and selects runner Chrome or installs Chromium.
 
-Pass all unit checks plus:
-- No GitHub Actions failure from missing dependencies, network calls or permissions.
-- All 24 committed SVGs parse and 12 animated SVG variants are distinguishable from their still counterparts.
-- All six GIFs exist in the standalone repository, have actual 16,000-ms loops, show visible motion and remain within acceptable size.
-- Human visual inspection at approximately 700 px README width and a narrow mobile viewport; ensure calendar legibility and clear legend.
-- GitHub-hosted image playback observed on the actual repository README, not merely inferred from local browser success.
-- Explicit labels that current demo fixtures are synthetic and mixed event units are not official contributions.
-- No hardcoded API token, private data, external network runtime dependency or HTML/SVG injection.
-- Migration code paths are correct from a **fresh standalone clone**, not from the Studio monorepo.
+## Export reproducibility
 
-## Additional tests needed for the next milestones
+~~~powershell
+node export.mjs
+node export.mjs --input fixtures/streak-demo.json --out assets/stress --label "SYNTHETIC STREAK STRESS TEST"
+git diff --exit-code -- assets/
+~~~
 
-An official GraphQL collector must have offline tests for login mismatch, invalid token, GraphQL errors, rate-limit, timeout, non-negative daily counts, missing/duplicate dates, calendar-year boundaries, leap years, completeness, private contribution visibility and safe log redaction.
+The CI archive check parses 24 synthetic SVGs and, when present, twelve official owner SVGs. It regenerates synthetic exports and verifies no tracked asset changes. The owner workflow separately checks the official SVG source marker and all six official GIFs for 720x234 dimensions, multiple frames and exactly 16,000ms total duration.
 
-The public GitHub Action must have workflow tests for explicit inputs, least-privilege token, forks/PR security, file path validation, refusal to overwrite on failed fetch, deterministic output, safe commit-if-changed semantics, no workflow loop, and manual re-run.
+## Verified workflow evidence
 
-## Status policy
+- Quality gate [run 44329856067](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44329856067) passed on 18 November 2026: 42/42 Node tests, 5/5 Python tests, Chromium desktop/mobile smoke and 24 synthetic plus 12 official SVG validation.
+- Latest scheduled owner refresh at this audit, [run 44892083199](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44892083199), completed successfully on 21 November 2026. It collected official data, exercised the composite Action, rendered and validated all official assets, refreshed README statistics and committed the outputs.
+- Earlier scheduled refreshes [run 44717177984](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44717177984) and [run 44506254424](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44506254424) also succeeded.
 
-Do not label a result 'passed' unless actually executed. Treat GitHub-hosted visual playback as **unverified** until independently inspected. Tests and workflows are part of this repository, but their success must be checked per commit. Record non-passing and skipped cases in the associated PR.
+These are point-in-time results. Always inspect the latest run for the current commit before reporting CI status. Bot-generated refresh commits do not necessarily trigger other workflows. Early migration runs failed because a recursive asset glob mixed official SVGs into the synthetic count; the workflow now checks the 24 synthetic and twelve official SVGs separately. See docs/MIGRATION.md for the failure links and correction.
 
-## Official-calendar quality gates
+## What these tests do not prove
 
-The new tests/test_official.mjs covers GraphQL window coverage, date ordering, proper GitHub weekday/count/intensity preservation, duplicate and missing-date rejection, user identity checks, failure handling and all three designs in both themes. tests/test_action.mjs rejects unsafe output paths, malformed usernames and invalid render options. The owner-calendar workflow separately smoke-tested the composite Action against a real GitHub API response without modifying the live profile.
+- The browser smoke is an offline synthetic gallery test. It does not verify the actual GitHub README rendering or image proxy.
+- The official collector is unit-tested with offline response fixtures. The owner workflow provides a real API integration smoke for the configured owner and token, not a universal account/permission test.
+- The composite Action is exercised in this repository. A clean external consumer repository and private-contribution visibility across different token types remain unverified.
+- A successful GIF decode and 16-second duration do not prove GitHub's image proxy displays animation. Human visual inspection on the actual README is still required.
 
-Verified CI: https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44317579330 (39/39 Node tests, five Python GIF tests, Chromium mobile/desktop checks, 24 synthetic and 12 authentic SVGs). Verified real pipeline: https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44316951258. GitHub-hosted GIF playback has not been independently observed.
+Never report skipped or unexecuted checks as passed. Distinguish unit tests, browser smoke, real API workflow integration and manual GitHub visual review.

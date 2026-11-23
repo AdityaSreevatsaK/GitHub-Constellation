@@ -1,62 +1,63 @@
-# Migration provenance and decisions
+# Migration history and engineering decisions
 
-## Origin
+## Origin and destination
 
-- Source repository: https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio
+- Source: https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio
 - Source branch: concept/constellation
-- Source commit: be7f524597285c2078565068ab23a683316404a2 (17 November 2026)
-- Historical draft PR: https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/pull/1
-- Destination repository: https://github.com/AdityaSreevatsaK/GitHub-Constellation
+- Source implementation commit: be7f524597285c2078565068ab23a683316404a2
+- Historical Studio draft PR: https://github.com/AdityaSreevatsaK/GitHub-Activity-Studio/pull/1
+- Standalone destination: https://github.com/AdityaSreevatsaK/GitHub-Constellation
 - Destination default branch: master
-- Migration date: 18 November 2026
+- Standalone repository created and migration completed: 18 November 2026
 
-This is an intentional extraction of the **modern three-design Constellation implementation**, not a copy of unrelated Studio concepts and not a rewrite of its historical commits.
+The standalone repository was created so Constellation could evolve, be documented and eventually be released independently rather than remain one concept inside the Studio monorepo. The Studio PR was closed as superseded, not merged. The original source branch and history remain provenance.
 
-## Source to destination map
+## Vision and design evolution
 
-| Studio path | Standalone path | Reason |
-|---|---|---|
-| concepts/constellation/engine.mjs | engine.mjs | Core shared calendar model |
-| concepts/constellation/export.mjs | export.mjs | Root-level CLI |
-| concepts/constellation/export_gif.py | export_gif.py | Root-level optional GIF exporter |
-| concepts/constellation/preview.html | preview.html | Root-level interactive gallery |
-| concepts/constellation/tests/test_engine.mjs | tests/test_engine.mjs | Core unit tests |
-| concepts/constellation/tests/test_motion.mjs | tests/test_motion.mjs | Motion tests |
-| concepts/constellation/tests/test_gif.py | tests/test_gif.py | Timing/encoder tests |
-| concepts/constellation/tests/browser_smoke.py | tests/browser_smoke.py | Offline browser smoke |
-| concepts/constellation/fixtures/streak-demo.json | fixtures/streak-demo.json | Source-labelled synthetic stress fixture |
-| shared/fixtures/demo-activity.json | fixtures/demo-activity.json | Copied ten-event fixture, no external monorepo dependency |
-| concepts/constellation/assets/comet-*, cartographer-*, starforge-* | assets/ | 12 modern SVGs |
-| concepts/constellation/assets/stress/comet-*, cartographer-*, starforge-* | assets/stress/ | 12 modern stress SVGs; GIFs regenerated |
-| docs/DATA_CONTRACT.md | docs/DATA_CONTRACT.md | Preserved and updated event-sample contract |
-| concepts/constellation/AGENTS.md, NEXT_ITERATION.md | AGENTS.md, docs/ROADMAP.md and other docs | Rewritten for standalone ownership and current priorities |
+The original requirement was a GitHub-profile-ready reinterpretation of the familiar contribution calendar. The 53-week by seven-day grid had to remain recognisable, date positions had to be source-backed, both light and dark themes were required, and local SVG/GIF exports, a browser preview, tests and Windows-friendly instructions were part of the engineering scope.
 
-## Deliberately excluded
+Early radial, clustered and astronomy-first layouts were rejected because they made the contribution calendar hard to recognise or obscured its date structure. The approved designs became:
 
-- Other Studio concepts: Code Factory, Open Source Metro, Developer World, Agent Swarm.
-- Old experiments: constellation.py, calendar_sky.py, clustered/radial/calendar-atlas/calendar-trails assets, and their old Python tests. These remain in original Studio history; the current engine implements three approved designs instead.
-- Studio root README, branch isolation policies, irrelevant shared files and unrelated prompts.
+1. Comet Streaks: consecutive-date streaks become comet motion; isolated dates stay isolated.
+2. Celestial Cartographer: an observatory scans the calendar in date order.
+3. Starforge: bounded sparks travel to exact active-day positions.
 
-## Changes applied in extraction
+The designs share one calendar model so the same input cannot shift dates between visualisations. Native GIF became the intended README animation format because GitHub may suppress embedded SVG motion. Static SVG alternatives remain essential.
 
-- Fixed fixture-relative imports so export.mjs, preview.html, tests/test_engine.mjs and tests/browser_smoke.py run from the standalone root.
-- Replaced legacy branch/PR-only agent instructions with a new root AGENTS.md and extensive documentation.
-- Added dedicated GitHub Actions test and GIF generation workflows.
-- Kept the synthetic fixture contents intact.
-- Kept the renderer and existing test logic unchanged except for relocated imports/paths and gallery naming.
+## Extracted source and excluded experiments
 
-## Binary asset transfer limitation
+The migration moved the modern engine, exporter, browser gallery, GIF exporter, fixtures, tests, assets and project documentation to the standalone repository. Relative paths and imports were corrected for the new root.
 
-GitHub Git blobs in the source repository cannot be referenced directly by a tree in a separate Git repository. The 24 UTF-8 SVG exports are copied directly. The six binary GIFs are regenerated from their committed SVG sources by the standalone .github/workflows/generate-gifs.yml workflow, which checks loop timing and commits the resulting outputs when Actions permissions allow.
+The following were deliberately excluded: Code Factory, Open Source Metro, Developer World, Agent Swarm and unrelated Studio infrastructure. Older Python calendar-sky, radial, clustered and calendar-atlas experiments remain only in Studio history.
 
-**Confirmed 18 November 2026:** the six GIFs were committed by successful GitHub Actions run 44268515679 (commit 67cc5db), with source-backed 16-second playback validated by the GIF tests. This confirms the GIF-file migration. Independent visual verification in GitHub's image proxy remains outstanding.
+The original event-sample contract and synthetic fixtures were retained. Synthetic examples were never relabelled as personal activity.
 
-## Old PR and source preservation
+## Standalone implementation milestones
 
-Keep the original Studio concept branch intact as auditable provenance. Do not merge old PR #1 into Studio master: there is no longer a reason to integrate independent Constellation into the umbrella repository. **Completed 18 November 2026:** the new repository and passing CI were linked in a comment on Studio PR #1, which was closed as superseded, not merged. The original concept/constellation branch and all other Studio concepts remain intact.
+- **18 November 2026:** migration and standalone CI completed. The six synthetic stress GIFs were regenerated and committed by Actions because binary Git blobs could not be reused directly across repositories.
+- **18 November 2026:** official GitHub GraphQL contribution-calendar collection was added as a separate v2 schema. It validates account identity, complete dated coverage, weekday, counts and contribution levels. It does not manufacture event records.
+- **18 November 2026:** the reusable composite Action and owner-only scheduled refresh were merged through PR #1. The Action writes assets but does not commit them. The owner workflow commits only public preview assets and README summary to this repository.
+- **18 November 2026:** README summary automation was added so displayed contribution totals and fetch time stay aligned with generated images.
+- **19-21 November 2026:** scheduled owner refreshes completed successfully and updated the real-account assets and README summary.
 
-## Evidence and unresolved work
+## Technical challenges and lessons learned
 
-Source PR reported 28/28 Node and 5/5 Python tests, 16-second GIFs, and desktop/mobile Chromium smoke on the old branch. **New standalone verification:** [quality-gate run 44269551217](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44269551217) passed 28 Node checks, five GIF checks, desktop/mobile Chromium smoke and reproducible 24-SVG export verification. [GIF-generation run 44268515679](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44268515679) passed and committed six native GIFs. README local-link inventory: 26 relative paths, none missing. The only unverified presentation behaviour is actual GitHub image-proxy playback in a real browser.
+- **Monorepo-to-standalone paths:** the motion tests and browser scripts initially carried assumptions about the Studio directory layout. Imports and fixture paths were corrected so the standalone root is self-contained. See [the path correction](https://github.com/AdityaSreevatsaK/GitHub-Constellation/commit/6e71b968f4).
+- **Binary asset transfer:** source-repository Git blob references cannot be reused directly in a separate repository tree. The six GIFs were regenerated from the committed SVGs in the destination workflow and then validated.
+- **Source-aware SVG labels:** exports must not label an arbitrary custom input as the default synthetic demo. Export label handling and committed demo SVGs were corrected and regenerated in [0d98c79](https://github.com/AdityaSreevatsaK/GitHub-Constellation/commit/0d98c79c37) and [ba81f08](https://github.com/AdityaSreevatsaK/GitHub-Constellation/commit/ba81f08313).
+- **Synthetic versus official asset inventory:** early quality-gate runs [44316964982](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44316964982), [44317418668](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44317418668) and [44317429288](https://github.com/AdityaSreevatsaK/GitHub-Constellation/actions/runs/44317429288) failed because a recursive SVG glob counted the twelve new official SVGs as part of the 24-file synthetic archive, producing 36 instead of 24. The check was corrected to inventory root synthetic SVGs, stress synthetic SVGs and official owner SVGs separately. Never restore a recursive all-assets count as a synthetic-only assertion.
+- **Browser provisioning:** repeated Playwright Chromium installation was slow on hosted runners. CI now uses preinstalled Chrome when available, passes its executable through CONSTELLATION_CHROMIUM, and falls back to Playwright's Chromium installation. Both browser smoke and GIF export honour that variable. See [the CI adjustment](https://github.com/AdityaSreevatsaK/GitHub-Constellation/commit/c43fb8b911).
+- **GitHub image hosting:** embedded SVG animation may be suppressed by GitHub's image proxy. Native GIFs are therefore the README animation format, with static SVG alternatives. The actual rendered README still needs human playback inspection.
+- **Data authenticity:** official contribution counts are not event records. The v2 calendar contract remains separate from synthetic/event contract v1. The current owner GITHUB_TOKEN does not carry the optional read:user scope, so do not claim private/internal contributions are included.
+- **Documentation drift:** early agent workplans became stale after implementation. AGENTS.md now requires a fresh Git and Actions inspection, and ROADMAP.md is the sole current backlog.
 
-Production next steps: GitHub official contributions collection for the owner's actual account, secure reusable Action, daily updates, visual review and licence choice. See ROADMAP.md.
+## Current operational boundaries
+
+- The owner workflow modifies only GitHub-Constellation. It does not install or update imagery in the owner's separate GitHub profile repository.
+- Official numbers are API-visible. Private contribution visibility depends on GitHub settings and token authorisation.
+- The interactive preview gallery still uses synthetic fixtures; official account output is generated through the CLI/Action pipeline.
+- The native GIFs pass encoding, motion and 16-second timing checks. GitHub-hosted image-proxy playback has not been independently visually confirmed.
+- The reusable Action has been exercised in this repository but has no stable release tag and has not been fully accepted in an external consumer repository.
+- No licence has been selected. Public repository visibility does not grant an assumed licence to reuse the code.
+
+For current state and remaining work, use docs/ROADMAP.md. Historical source facts in this document should not be interpreted as evidence that the current branch still has the same state.
